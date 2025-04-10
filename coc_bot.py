@@ -78,7 +78,7 @@ def human_swipe(base_start):
     start_y = base_start[1] + random.randint(-100, 100)
 
     # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
-    end_y = start_y + 215 + random.randint(-25, 25)
+    end_y = start_y + 265 + random.randint(-25, 25)
     end_x = start_x + random.randint(-25, 25)
 
     # Randomly decide how many swipe segments to execute (1, 2, or 3).
@@ -98,12 +98,12 @@ def human_swipe(base_start):
         intermediate_y = end_y + random_y
         
         # First swipe from the randomized start to the intermediate point.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
         
         # Second swipe correcting the trajectory back to the ideal end.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
     
     else:
@@ -114,7 +114,7 @@ def human_swipe(base_start):
         intermediate1_x = start_x + random_x1
         intermediate1_y = start_y + random_y1
 
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
 
@@ -124,12 +124,12 @@ def human_swipe(base_start):
         intermediate2_x = end_x + random_x2
         intermediate2_y = end_y + random_y2
 
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
 
         # Third swipe: final correction to the ideal end position.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
 
 def human_swipe_up(base_start):
@@ -151,7 +151,7 @@ def human_swipe_up(base_start):
     start_y = base_start[1] + random.randint(-100, 100)
 
     # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
-    end_y = start_y - 215 + random.randint(-25, 25)
+    end_y = start_y - 265 + random.randint(-25, 25)
     end_x = start_x + random.randint(-25, 25)
 
     # Randomly decide how many swipe segments to execute (1, 2, or 3).
@@ -159,7 +159,7 @@ def human_swipe_up(base_start):
     
     if swipe_times == 1:
         # Single continuous swipe to the ideal end position.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
     
     elif swipe_times == 2:
@@ -171,12 +171,12 @@ def human_swipe_up(base_start):
         intermediate_y = end_y + random_y
         
         # First swipe from the randomized start to the intermediate point.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
         
         # Second swipe correcting the trajectory back to the ideal end.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
     
     else:
@@ -187,7 +187,7 @@ def human_swipe_up(base_start):
         intermediate1_x = start_x + random_x1
         intermediate1_y = start_y + random_y1
 
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
 
@@ -197,12 +197,12 @@ def human_swipe_up(base_start):
         intermediate2_x = end_x + random_x2
         intermediate2_y = end_y + random_y2
 
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
         time.sleep(random.uniform(0.5, 1))
 
         # Third swipe: final correction to the ideal end position.
-        total_duration = random.randint(500, 800)
+        total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)   
 
 
@@ -217,16 +217,16 @@ COORDS = {
     "scroll_down_start": (1130, 150),
     "scroll_up_start": (1130, 350),
 
-    "midpoint_drop": (634, 367),
+    "midpoint_drop": (681, 384),
 
     "valk_select_fallback": (457, 967),
-    "valk_drop_bottom_left": (139, 737),
-    "valk_drop_top_middle": (1018, 56),
+    "valk_drop_bottom_left": (310, 710),
+    "valk_drop_top_middle": (1125, 75),
 
 
-    "midpoint_dropv2": (1748, 372),
-    "valk_drop_bottom_leftv2": (1100, 46),
-    "valk_drop_top_middlev2": (2100, 742),
+    "midpoint_dropv2": (1761, 386),
+    "valk_drop_bottom_leftv2": (1125, 75),
+    "valk_drop_top_middlev2": (2208, 718),
 
     "rage_fallback1": (1432, 300),
     "rage_fallback2": (1120, 470),
