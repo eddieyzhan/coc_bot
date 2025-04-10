@@ -404,9 +404,10 @@ def attack():
         time.sleep(random.uniform(0.2, 0.4))
         adb_tap(COORDS["valk_drop_top_middle"][0], COORDS["valk_drop_top_middle"][1])
 
+    human_swipe_up(COORDS["scroll_up_start"])
+
     time.sleep(random.uniform(13, 18))
 
-    human_swipe_up(COORDS["scroll_up_start"])
 
     # Step 4: Tap on the rage spell.
     if rage_found:
@@ -423,6 +424,21 @@ def attack():
         adb_tap(COORDS["rage_fallback4"][0], COORDS["rage_fallback4"][1])
         time.sleep(random.uniform(0.5, 1))
         adb_tap(COORDS["rage_fallback5"][0], COORDS["rage_fallback5"][1])
+    
+    time.sleep(random.uniform(2, 4))
+    swipe_activites = random.randint(1, 3)
+    if swipe_activites == 1:
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
+    elif swipe_activites == 2:  
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
+        time.sleep(random.uniform(2, 3))
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
 
 def attack2():
     print("Starting attack sequence...")
@@ -542,6 +558,20 @@ def attack2():
         adb_tap(COORDS["rage_fallback4v2"][0], COORDS["rage_fallback4v2"][1])
         time.sleep(random.uniform(0.5, 1))
         adb_tap(COORDS["rage_fallback5v2"][0], COORDS["rage_fallback5v2"][1])
+    
+    swipe_activites = random.randint(1, 3)
+    if swipe_activites == 1:
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
+    elif swipe_activites == 2:  
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
+        time.sleep(random.uniform(2, 3))
+        random_x_swipe = random.randint(800, 1600)
+        random_y_swipe = random.randint(100, 400)
+        human_swipe((random_x_swipe, random_y_swipe))
      
 
 def main():
