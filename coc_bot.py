@@ -246,72 +246,78 @@ COORDS = {
 # --- Bot Functions ---
 
 def find_attack():
-    time.sleep(random.uniform(3, 4))
-    print("Searching for 'attack' button...")
-    attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
-    if attack_btn:
-        print("Found attack button at:", attack_btn)
-        jitter_x = random.randint(-50, 50)
-        jitter_y = random.randint(-50, 50)
-        adb_tap(attack_btn[0] + jitter_x, attack_btn[1] + jitter_y)
-
-        time.sleep(random.uniform(0.5, 3))
-    else:
-        print("Attack button not found within 10 seconds.")
-        print("backup")
-        jitter_x = random.randint(-60, 60)
-        jitter_y = random.randint(-60, 60)
-        adb_tap(COORDS["backup_attack"][0] + jitter_x, COORDS["backup_attack"][1] + jitter_y)
-
-        time.sleep(random.uniform(0.5, 3))
-
-    print("Searching for 'find match' button...")
-    match_btn = wait_for_template("templates/find_match.png", timeout=3)
-    if match_btn:
-        print("Found 'find match' button at:", match_btn)
-        for _ in range(random.randint(1, 3)):
+    while True:
+        time.sleep(random.uniform(1, 2))
+        print("Searching for 'attack' button...")
+        attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
+        if attack_btn:
+            print("Found attack button at:", attack_btn)
             jitter_x = random.randint(-50, 50)
             jitter_y = random.randint(-50, 50)
-            adb_tap(match_btn[0] + jitter_x, match_btn[1] + jitter_y)
-            time.sleep(random.uniform(0.2, 0.3))
-        time.sleep(random.uniform(0.5, 2))
-    else:
-        print("Find match button not found within 3 seconds.")
+            adb_tap(attack_btn[0] + jitter_x, attack_btn[1] + jitter_y)
+            time.sleep(random.uniform(0.5, 3))
+        else:
+            print("Attack button not found within 10 seconds.")
+            print("backup")
+            jitter_x = random.randint(-60, 60)
+            jitter_y = random.randint(-60, 60)
+            adb_tap(COORDS["backup_attack"][0] + jitter_x, COORDS["backup_attack"][1] + jitter_y)
+            time.sleep(random.uniform(0.5, 3))
 
-
-    # Randomly click the 'next' button 0 to 5 times.
-    clicks = random.randint(0, 5)
-    for _ in range(clicks):
-        random_moves = random.randint(0, 1)
-        if random_moves == 1:
-            time.sleep(random.uniform(2, 3))
+        print("Searching for 'find match' button...")
+        match_btn = wait_for_template("templates/find_match.png", timeout=3)
+        if match_btn:
+            print("Found 'find match' button at:", match_btn)
             for _ in range(random.randint(1, 3)):
-                random_x = random.randint(600, 1200)
-                random_y = random.randint(100, 500)
-                adb_tap(random_x, random_y)
-                time.sleep(random.uniform(1, 2))
-        next_btn = wait_for_template("templates/next_button.png", timeout=20)
-        if next_btn:
-            print("Clicking next button at:", next_btn)
-            for _ in range(random.randint(1, 5)):
                 jitter_x = random.randint(-50, 50)
                 jitter_y = random.randint(-50, 50)
-                adb_tap(next_btn[0] + jitter_x, next_btn[1] + jitter_y)
+                adb_tap(match_btn[0] + jitter_x, match_btn[1] + jitter_y)
                 time.sleep(random.uniform(0.2, 0.3))
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(0.5, 2))
         else:
-            print("Next button not found within 20 seconds.")
-            break
-    
-    time.sleep(random.uniform(10, 15))
-    # Proceed to the attack phase.
-    attack_strat = random.randint(1, 2)
-    if attack_strat == 1:
-        print("Using attack strategy 1.")
-        attack()
-    else:
-        print("Using attack strategy 2.")
-        attack2()
+            print("Find match button not found within 3 seconds.")
+            # Restart the loop if this part fails.
+            continue
+
+        # Randomly click the 'next' button 0 to 5 times.
+        clicks = random.randint(0, 5)
+        for _ in range(clicks):
+            random_moves = random.randint(0, 1)
+            if random_moves == 1:
+                time.sleep(random.uniform(2, 3))
+                for _ in range(random.randint(1, 3)):
+                    random_x = random.randint(600, 1200)
+                    random_y = random.randint(100, 500)
+                    adb_tap(random_x, random_y)
+                    time.sleep(random.uniform(1, 2))
+            next_btn = wait_for_template("templates/next_button.png", timeout=20)
+            if next_btn:
+                print("Clicking next button at:", next_btn)
+                time.sleep(random.uniform(1, 2))
+                for _ in range(random.randint(1, 5)):
+                    jitter_x = random.randint(-50, 50)
+                    jitter_y = random.randint(-50, 50)
+                    adb_tap(next_btn[0] + jitter_x, next_btn[1] + jitter_y)
+                    time.sleep(random.uniform(0.2, 0.3))
+                time.sleep(random.uniform(1, 2))
+            else:
+                print("Next button not found within 20 seconds.")
+                time.sleep(240)
+                continue
+
+        time.sleep(random.uniform(10, 15))
+        # Proceed to the attack phase.
+        attack_strat = random.randint(1, 2)
+        if attack_strat == 1:
+            print("Using attack strategy 1.")
+            attack()
+        else:
+            print("Using attack strategy 2.")
+            attack2()
+
+        # Break out of the loop if everything is done successfully.
+        break
+
 
 def attack():
     print("Starting attack sequence...")
