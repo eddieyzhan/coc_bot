@@ -61,55 +61,150 @@ def wait_for_template(template_path, timeout=3, threshold=0.85):
 
 def human_swipe(base_start):
     """
-    Performs a swipe gesture with randomized starting and ending points.
+    Simulates a human-like swipe from a randomized start position (near base_start) 
+    to an ideal end position with a limited error margin.
     
-    - The starting point is randomized within a ±200 pixel offset from the given base_start.
-    - The ending point is computed relative to the randomized start:
-        • The y-difference (vertical movement) is randomly chosen between 210 and 280 pixels.
-        • The x-difference is randomized within ±200 pixels.
+    The swipe gesture can be performed in 1, 2, or 3 segments randomly:
+      - If 1 swipe, the movement goes directly from the randomized start to the ideal end.
+      - If 2 swipes, the gesture first swipes in a random direction, then corrects the 
+        movement by swiping from the intermediate point to the ideal end.
+      - If 3 swipes, two random intermediate swipes are performed followed by a 
+        final correction swipe to the ideal end.
     
-    Executes the swipe as a single ADB command.
+    The durations of each swipe are randomized between 500 and 800 milliseconds.
     """
-    # Randomize starting point within a ±200 pixel radius of base_start
-    start_x = base_start[0] + random.randint(-200, 200)
-    start_y = base_start[1] + random.randint(-200, 200)
-    
-    # Determine end point:
-    # The vertical (y) difference is in the range [210, 280]
-    # The horizontal (x) difference is randomized within ±200 pixels
-    end_x = start_x + random.randint(-200, 200)
-    end_y = start_y + random.randint(200, 240)
+    # Randomize the starting point from the base_start within a wide margin.
+    start_x = base_start[0] + random.randint(-400, 400)
+    start_y = base_start[1] + random.randint(-100, 100)
 
-    total_duration = random.randint(400, 700)
+    # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
+    end_y = start_y + 215 + random.randint(-25, 25)
+    end_x = start_x + random.randint(-25, 25)
+
+    # Randomly decide how many swipe segments to execute (1, 2, or 3).
+    swipe_times = random.randint(1, 3)
     
-    # Execute a single ADB swipe command with the randomized coordinates
-    adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+    if swipe_times == 1:
+        # Single continuous swipe to the ideal end position.
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+    
+    elif swipe_times == 2:
+        # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
+        # Generate a random offset for the intermediate endpoint.
+        random_x = random.randint(-200, 200)
+        random_y = random.randint(-200, 200)
+        intermediate_x = end_x + random_x
+        intermediate_y = end_y + random_y
+        
+        # First swipe from the randomized start to the intermediate point.
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+        
+        # Second swipe correcting the trajectory back to the ideal end.
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
+    
+    else:
+        # Three swipes: two random intermediate swipes followed by a final correction swipe.
+        # First swipe: move to a first intermediate point.
+        random_x1 = random.randint(-200, 200)
+        random_y1 = random.randint(-200, 200)
+        intermediate1_x = start_x + random_x1
+        intermediate1_y = start_y + random_y1
+
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+
+        # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
+        random_x2 = random.randint(-200, 200)
+        random_y2 = random.randint(-200, 200)
+        intermediate2_x = end_x + random_x2
+        intermediate2_y = end_y + random_y2
+
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+
+        # Third swipe: final correction to the ideal end position.
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
 
 def human_swipe_up(base_start):
     """
-    Performs a swipe gesture with randomized starting and ending points.
+    Simulates a human-like swipe from a randomized start position (near base_start) 
+    to an ideal end position with a limited error margin.
     
-    - The starting point is randomized within a ±200 pixel offset from the given base_start.
-    - The ending point is computed relative to the randomized start:
-        • The y-difference (vertical movement) is randomly chosen between 210 and 280 pixels.
-        • The x-difference is randomized within ±200 pixels.
+    The swipe gesture can be performed in 1, 2, or 3 segments randomly:
+      - If 1 swipe, the movement goes directly from the randomized start to the ideal end.
+      - If 2 swipes, the gesture first swipes in a random direction, then corrects the 
+        movement by swiping from the intermediate point to the ideal end.
+      - If 3 swipes, two random intermediate swipes are performed followed by a 
+        final correction swipe to the ideal end.
     
-    Executes the swipe as a single ADB command.
+    The durations of each swipe are randomized between 500 and 800 milliseconds.
     """
-    # Randomize starting point within a ±200 pixel radius of base_start
-    start_x = base_start[0] + random.randint(-200, 200)
-    start_y = base_start[1] + random.randint(-200, 200)
-    
-    # Determine end point:
-    # The vertical (y) difference is in the range [210, 280]
-    # The horizontal (x) difference is randomized within ±200 pixels
-    end_x = start_x + random.randint(-200, 200)
-    end_y = start_y - random.randint(210, 280)
+    # Randomize the starting point from the base_start within a wide margin.
+    start_x = base_start[0] + random.randint(-400, 400)
+    start_y = base_start[1] + random.randint(-100, 100)
 
-    total_duration = random.randint(300, 500)
+    # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
+    end_y = start_y - 215 + random.randint(-25, 25)
+    end_x = start_x + random.randint(-25, 25)
+
+    # Randomly decide how many swipe segments to execute (1, 2, or 3).
+    swipe_times = random.randint(1, 3)
     
-    # Execute a single ADB swipe command with the randomized coordinates
-    adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+    if swipe_times == 1:
+        # Single continuous swipe to the ideal end position.
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+    
+    elif swipe_times == 2:
+        # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
+        # Generate a random offset for the intermediate endpoint.
+        random_x = random.randint(-200, 200)
+        random_y = random.randint(-200, 200)
+        intermediate_x = end_x + random_x
+        intermediate_y = end_y + random_y
+        
+        # First swipe from the randomized start to the intermediate point.
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+        
+        # Second swipe correcting the trajectory back to the ideal end.
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
+    
+    else:
+        # Three swipes: two random intermediate swipes followed by a final correction swipe.
+        # First swipe: move to a first intermediate point.
+        random_x1 = random.randint(-200, 200)
+        random_y1 = random.randint(-100, 100)
+        intermediate1_x = start_x + random_x1
+        intermediate1_y = start_y + random_y1
+
+        total_duration = random.randint(500, 800)
+        adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+
+        # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
+        random_x2 = random.randint(-200, 200)
+        random_y2 = random.randint(-100, 100)
+        intermediate2_x = end_x + random_x2
+        intermediate2_y = end_y + random_y2
+
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
+        time.sleep(random.uniform(0.5, 1))
+
+        # Third swipe: final correction to the ideal end position.
+        total_duration = random.randint(500, 800)
+        adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)   
+
 
 
 # --- COORDS Dictionary ---
@@ -119,8 +214,8 @@ COORDS = {
     "zoom_out_end": (1090, 525),
 
 
-    "scroll_down_start": (1130, 310),
-    "scroll_down_end": (1090, 525),
+    "scroll_down_start": (1130, 150),
+    "scroll_up_start": (1130, 350),
 
     "midpoint_drop": (634, 367),
 
@@ -177,8 +272,16 @@ def find_attack():
 
 
     # Randomly click the 'next' button 0 to 5 times.
-    clicks = random.randint(0, 2)
+    clicks = random.randint(0, 5)
     for _ in range(clicks):
+        random_moves = random.randint(0, 1)
+        if random_moves == 1:
+            time.sleep(random.uniform(2, 3))
+            for _ in range(random.randint(1, 3)):
+                random_x = random.randint(600, 1200)
+                random_y = random.randint(100, 500)
+                adb_tap(random_x, random_y)
+                time.sleep(random.uniform(1, 2))
         next_btn = wait_for_template("templates/next_button.png", timeout=20)
         if next_btn:
             print("Clicking next button at:", next_btn)
@@ -303,7 +406,7 @@ def attack():
 
     time.sleep(random.uniform(13, 18))
 
-    human_swipe_up(COORDS["scroll_down_start"])
+    human_swipe_up(COORDS["scroll_up_start"])
 
     # Step 4: Tap on the rage spell.
     if rage_found:
@@ -422,7 +525,7 @@ def attack2():
 
     time.sleep(random.uniform(8, 13))
 
-    human_swipe_up(COORDS["scroll_down_start"])
+    human_swipe_up(COORDS["scroll_up_start"])
 
     # Step 4: Tap on the rage spell.
     if rage_found:
