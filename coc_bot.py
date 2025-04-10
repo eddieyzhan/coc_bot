@@ -246,7 +246,7 @@ COORDS = {
 
 def find_attack():
     print("Searching for 'attack' button...")
-    attack_btn = wait_for_template("templates/attack_button.png", timeout=3)
+    attack_btn = wait_for_template("templates/attack_button.png", timeout=30)
     if attack_btn:
         print("Found attack button at:", attack_btn)
         jitter_x = random.randint(-50, 50)
@@ -255,7 +255,7 @@ def find_attack():
 
         time.sleep(random.uniform(0.5, 3))
     else:
-        print("Attack button not found within 3 seconds.")
+        print("Attack button not found within 30 seconds.")
 
     print("Searching for 'find match' button...")
     match_btn = wait_for_template("templates/find_match.png", timeout=3)
