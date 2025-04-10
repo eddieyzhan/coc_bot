@@ -210,6 +210,7 @@ def human_swipe_up(base_start):
 # --- COORDS Dictionary ---
 # Use fallback coordinates if dynamic template detection fails.
 COORDS = {
+    "backup_attack": (218, 947),
     "zoom_out_start": (1130, 310),
     "zoom_out_end": (1090, 525),
 
@@ -245,8 +246,9 @@ COORDS = {
 # --- Bot Functions ---
 
 def find_attack():
+    time.sleep(random.uniform(3, 4))
     print("Searching for 'attack' button...")
-    attack_btn = wait_for_template("templates/attack_button.png", timeout=30)
+    attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
     if attack_btn:
         print("Found attack button at:", attack_btn)
         jitter_x = random.randint(-50, 50)
@@ -255,7 +257,13 @@ def find_attack():
 
         time.sleep(random.uniform(0.5, 3))
     else:
-        print("Attack button not found within 30 seconds.")
+        print("Attack button not found within 10 seconds.")
+        print("backup")
+        jitter_x = random.randint(-60, 60)
+        jitter_y = random.randint(-60, 60)
+        adb_tap(COORDS["backup_attack"][0] + jitter_x, COORDS["backup_attack"][1] + jitter_y)
+
+        time.sleep(random.uniform(0.5, 3))
 
     print("Searching for 'find match' button...")
     match_btn = wait_for_template("templates/find_match.png", timeout=3)
@@ -579,7 +587,6 @@ def main():
     print(f"Starting main loop for {iterations} iterations.")
     for i in range(iterations):
         print(f"\nIteration {i+1}/{iterations}")
-        time.sleep(random.uniform(1, 3))
         find_attack()
         print("Waiting for 'return home' indicator...")
         timeout = 180
@@ -598,7 +605,6 @@ def main():
             time.sleep(1)
         else:
             print("Timeout waiting for return home.")
-        time.sleep(random.uniform(1, 10))
     print("Main loop finished.")
 
 if __name__ == "__main__":
