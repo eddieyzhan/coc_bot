@@ -46,7 +46,7 @@ def read_trophies():
     else:
         return None
 
-def adb_tap(x, y, jitter=5):
+def adb_tap(x, y, jitter=3):
     """
     Sends a tap command via ADB at (x, y) with an added random jitter.
     """
@@ -245,30 +245,30 @@ def get_drop_coords(number=1):
 
     if number == 1:
         print("Using attack strategy 1.")
-        left_x = random.randint(198, 230)
-        right_x = random.randint(700, 750)
-        mid_x = random.randint(450, 500)
-        left_y = round(-0.72 * left_x + 605 + random.randint(-10, 10))
-        right_y = round(-0.72 * right_x + 605 + random.randint(-10, 10))
-        mid_y = round(-0.72 * mid_x + 605 + random.randint(-10, 10))
+        left_x = random.randint(78, 110)
+        right_x = random.randint(480, 514)
+        mid_x = random.randint(269, 310)
+        left_y = round(-0.8165 * left_x + 542.68)
+        right_y = round(-0.8165 * right_x + 542.68)
+        mid_y = round(-0.8165 * mid_x + 542.68)
         return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
     elif number == 2:
         print("Using attack strategy 2.")   
-        left_x = random.randint(209, 240)
-        right_x = random.randint(400, 450)
-        mid_x = random.randint(320, 350)
-        left_y = round(0.624 * left_x + 430 + random.randint(-10, 10))
-        right_y = round(0.624 * right_x + 430 + random.randint(-10, 10))
-        mid_y = round(0.624 * mid_x + 430 + random.randint(-10, 10))
+        left_x = random.randint(120, 150)
+        right_x = random.randint(400, 455)
+        mid_x = random.randint(260, 300)
+        left_y = round(0.865 * left_x + 376.2)
+        right_y = round(0.865 * right_x + 376.2)
+        mid_y = round(0.865 * mid_x + 376.2)
         return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
     elif number == 3:
         print("Using attack strategy 3.")
-        left_x = random.randint(1643, 1675)
-        right_x = random.randint(2179, 2217)
-        mid_x = random.randint(1900, 1960)
-        left_y = round(0.74 * left_x - 1110 + random.randint(-10, 10))
-        right_y = round(0.74 * right_x - 1115 + random.randint(-10, 10))
-        mid_y = round(0.74 * mid_x - 1110 + random.randint(-10, 10))
+        left_x = random.randint(1755, 1795)
+        right_x = random.randint(2270, 2318)
+        mid_x = random.randint(1990, 2060)
+        left_y = round(0.751 * left_x - 1278.64)
+        right_y = round(0.751 * right_x - 1278.64)
+        mid_y = round(0.751 * mid_x - 1278.64)
         return left_x, left_y, right_x, right_y, mid_x + 5, mid_y, rage_mid, rage_top, rage_bot, rage2_left_up, rage2_left_down
         
 
@@ -594,45 +594,45 @@ def attack():
             print("Found Rage spell at:", rage_found)
             adb_tap(rage_found[0], rage_found[1])
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1"][0], COORDS["rage_fallback1"][1])
+            adb_tap(COORDS["rage_fallback1"][0] + jitter_x, COORDS["rage_fallback1"][1] + jitter_y)
             time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1])
+            adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1] + jitter_y)
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3"][0], COORDS["rage_fallback3"][1])
+            adb_tap(COORDS["rage_fallback3"][0]+ jitter_x, COORDS["rage_fallback3"][1] + jitter_y)
             time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
-            adb_tap(COORDS["rage_fallback4"][0]+ jitter_x, COORDS["rage_fallback4"][1])
+            adb_tap(COORDS["rage_fallback4"][0]+ jitter_x, COORDS["rage_fallback4"][1] + jitter_y)
             time.sleep(random.uniform(0.5, 1))
-            adb_tap(COORDS["rage_fallback5"][0]+ jitter_x, COORDS["rage_fallback5"][1])
+            adb_tap(COORDS["rage_fallback5"][0]+ jitter_x, COORDS["rage_fallback5"][1] + jitter_y)
     elif attack_strat == 2:
         if rage_found:
             print("Found Rage spell at:", rage_found)
             adb_tap(rage_found[0], rage_found[1])
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1] + jitter_y)
+            adb_tap(COORDS["rage_fallback1v2"][0] + jitter_x, COORDS["rage_fallback1v2"][1] + jitter_y)
             time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
+            adb_tap(COORDS["rage_fallback2v2"][0] + jitter_x, COORDS["rage_fallback2v2"][1] + jitter_y)
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
+            adb_tap(COORDS["rage_fallback3v2"][0] + jitter_x, COORDS["rage_fallback3v2"][1] + jitter_y)
             time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
-            adb_tap(rage_top[0] + 100 + jitter_x, rage_top[1] + 100)
+            adb_tap(rage_top[0] + 100 + jitter_x, rage_top[1] + 100 + jitter_y)
             time.sleep(random.uniform(0.5, 1))
-            adb_tap(rage2_right_down[0] + 150 + jitter_x, rage2_right_down[1] - 50)
+            adb_tap(rage2_right_down[0] + 150 + jitter_x, rage2_right_down[1] - 50 + jitter_y)
     
     elif attack_strat == 3:
         if rage_found:
             print("Found Rage spell at:", rage_found)
             adb_tap(rage_found[0], rage_found[1])
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1])
+            adb_tap(COORDS["rage_fallback1v2"][0] + jitter_x, COORDS["rage_fallback1v2"][1] + jitter_y)
             time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
+            adb_tap(COORDS["rage_fallback2v2"][0] + jitter_x, COORDS["rage_fallback2v2"][1] + jitter_y)
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
+            adb_tap(COORDS["rage_fallback3v2"][0] + jitter_x, COORDS["rage_fallback3v2"][1] + jitter_y)
             time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
-            adb_tap(COORDS["rage_fallback4v2"][0] + jitter_x, COORDS["rage_fallback4v2"][1])
+            adb_tap(COORDS["rage_fallback4v2"][0] + jitter_x, COORDS["rage_fallback4v2"][1] + jitter_y)
             time.sleep(random.uniform(0.5, 1))
             adb_tap(COORDS["rage_fallback5v2"][0] + jitter_x, COORDS["rage_fallback5v2"][1] + jitter_y)
 
