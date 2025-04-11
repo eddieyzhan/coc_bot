@@ -432,8 +432,9 @@ def find_attack(drop=False):
         break
 
 def drop_attack():
-    random_start = random.randint(1, 7)
-    
+    attack_strat = random.randint(1, 3)
+    left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down = get_drop_coords(attack_strat)
+
     next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
     print("Capturing hero positions dynamically...")
@@ -443,9 +444,17 @@ def drop_attack():
         print("Found King at:", king_found)
         adb_tap(king_found[0], king_found[1])
         time.sleep(random.uniform(0.75, 1.5))
-        adb_tap(COORDS["drop_attack" + str(random_start)][0], COORDS["drop_attack" + str(random_start)][1])
-        time.sleep(random.uniform(0.1, 0.3))
-        adb_tap(COORDS["drop_attack" + str(random_start)][0], COORDS["drop_attack" + str(random_start)][1])
+        placement = random.randint(1, 3)
+        if placement == 1:
+            print("Dropping King at left drop point.")
+            adb_tap(left_x, left_y)
+        elif placement == 2:
+            print("Dropping King at right drop point.")
+            adb_tap(right_x, right_y)
+        elif placement == 3:
+            print("Dropping King at mid drop point.")
+            adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0, 2))
     
     surrender = wait_for_template("templates/surrender.png", timeout=5)
     
@@ -761,6 +770,7 @@ def main():
     iterations = random.randint(25, 35)
     print(f"Starting main loop for {iterations} iterations.")
     for i in range(iterations):
+        print(f"AHHHHHH WE ARE ABOUT TO TEST TROPHIES")
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
@@ -771,7 +781,7 @@ def main():
                 continue  # Skip this iteration and re-check trophy count next time.
             else:
                 tries = 0
-                while trophies > 5200 and tries < 3:
+                while trophies > 5200 and trophies < 2000 and tries < 3:
                     print(f"Misread detected (trophies = {trophies}). Retrying read ({tries + 1}/3)...")
                     trophies = read_trophies()
                     tries += 1
