@@ -281,7 +281,7 @@ COORDS = {
 
 # --- Bot Functions ---
 def drop_trophies():
-    iterations = random.randint(80, 100)
+    iterations = random.randint(25, 45)
     print(f"Starting trophy drop for {iterations} iterations.")
     for i in range(iterations):
         print(f"\nIteration {i+1}/{iterations}")
@@ -311,7 +311,7 @@ def drop_trophies():
 
 def find_attack(drop=False):
     while True:
-        time.sleep(random.uniform(1, 2))
+        time.sleep(random.uniform(0, 1))
         print("Searching for 'attack' button...")
         attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
         if attack_btn:
@@ -342,11 +342,11 @@ def find_attack(drop=False):
             print("Find match button not found within 3 seconds.")
             # Restart the loop if this part fails.
             continue
-        
+
         if drop:
             print("Using drop strategy")
             drop_attack()
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(0, 2))
             break
 
         # Randomly click the 'next' button 0 to 5 times.
@@ -354,7 +354,7 @@ def find_attack(drop=False):
         for _ in range(clicks):
             random_moves = random.randint(0, 1)
             if random_moves == 1:
-                time.sleep(random.uniform(2, 3))
+                time.sleep(random.uniform(0, 1))
                 for _ in range(random.randint(1, 3)):
                     random_x = random.randint(600, 1200)
                     random_y = random.randint(100, 500)
@@ -363,19 +363,18 @@ def find_attack(drop=False):
             next_btn = wait_for_template("templates/next_button.png", timeout=20)
             if next_btn:
                 print("Clicking next button at:", next_btn)
-                time.sleep(random.uniform(1, 2))
+                time.sleep(random.uniform(0, 1))
                 for _ in range(random.randint(1, 5)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(next_btn[0] + jitter_x, next_btn[1] + jitter_y)
-                    time.sleep(random.uniform(0.2, 0.3))
-                time.sleep(random.uniform(1, 2))
+                    time.sleep(random.uniform(0.2, 0.5))
             else:
                 print("Next button not found within 20 seconds.")
                 time.sleep(240)
                 continue
 
-        time.sleep(random.uniform(10, 15))
+        time.sleep(random.uniform(0, 3))
 
         # Proceed to the attack phase.
         attack_strat = random.randint(1, 2)
@@ -523,7 +522,7 @@ def attack():
 
     human_swipe_up(COORDS["scroll_up_start"])
 
-    time.sleep(random.uniform(10, 13))
+    time.sleep(random.uniform(9, 11))
 
 
     # Step 4: Tap on the rage spell.
@@ -641,7 +640,7 @@ def attack2():
         time.sleep(random.uniform(0.2, 0.4))
         adb_tap(COORDS["valk_drop_top_middlev2"][0], COORDS["valk_drop_top_middlev2"][1])
 
-    time.sleep(random.uniform(10, 13))
+    time.sleep(random.uniform(9, 11))
 
     human_swipe_up(COORDS["scroll_up_start"])
 
@@ -669,10 +668,10 @@ def main():
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 2000:
+            if trophies > 4800:
                 drop_trophies()
                 # Optionally, wait some time after dropping trophies before proceeding.
-                time.sleep(random.uniform(1, 2))
+                time.sleep(random.uniform(0, 1))
                 continue  # Skip this iteration and re-check trophy count next time.
 
         print(f"\nIteration {i+1}/{iterations}")
