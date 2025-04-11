@@ -173,7 +173,7 @@ def human_swipe(base_start):
 
 def human_swipe_up(base_start):
     # Randomize the starting point from the base_start within a wide margin.
-    start_x = base_start[0] + random.randint(-200, 200)
+    start_x = base_start[0] + random.randint(-150, 150)
     start_y = base_start[1] + random.randint(-100, 100)
 
     # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
@@ -231,18 +231,57 @@ def human_swipe_up(base_start):
         total_duration = random.randint(1000, 1100)
         adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
 
+def get_drop_coords(number=1):
+    rage_mid = (1202, 104)
+    rage_top = (1197, 238)
+    rage_bot = (1190, 725)
+
+    rage2_right_up = (935, 345)
+    rage2_right_down = (935, 570)
+
+    rage2_left_up = (1400, 345)
+    rage2_left_down = (1400, 570)
+
+
+    if number == 1:
+        left_x = random.randint(198, 230)
+        right_x = random.randint(700, 750)
+        mid_x = random.randint(450, 500)
+        left_y = round(-0.72 * left_x + 608.5 + random.randint(-10, 10))
+        right_y = round(-0.72 * right_x + 608.5 + random.randint(-10, 10))
+        mid_y = round(-0.72 * mid_x + 608.5 + random.randint(-10, 10))
+        return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
+    elif number == 2:
+        left_x = random.randint(209, 240)
+        right_x = random.randint(400, 450)
+        mid_x = random.randint(320, 350)
+        left_y = round(0.624 * left_x + 425.58 + random.randint(-10, 10))
+        right_y = round(0.624 * right_x + 425.58 + random.randint(-10, 10))
+        mid_y = round(0.624 * mid_x + 425.58 + random.randint(-10, 10))
+        return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
+    elif number == 3:
+        left_x = random.randint(1643, 1685)
+        right_x = random.randint(2179, 2217)
+        mid_x = random.randint(1900, 1960)
+        left_y = round(0.74 * left_x - 1150 + random.randint(-10, 10))
+        right_y = round(0.74 * right_x - 1150 + random.randint(-10, 10))
+        mid_y = round(0.74 * mid_x - 1150 + random.randint(-10, 10))
+        return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_left_up, rage2_left_down
+        
+
+
 
 
 # --- COORDS Dictionary ---
 # Use fallback coordinates if dynamic template detection fails.
 COORDS = {
-    "drop_attack1": (2092, 424),
-    "drop_attack2": (1813, 224),
-    "drop_attack3": (289, 600),
-    "drop_attack4": (510, 257),
-    "drop_attack5": (748, 89),
-    "drop_attack6": (186, 525),
-    "drop_attack7": (345, 655),
+    "drop_attack1": (198, 466),
+    "drop_attack2": (751, 68),
+    "drop_attack3": (209, 556),
+    "drop_attack4": (454, 709),
+    "drop_attack5": (2217, 490),
+    "drop_attack6": (400, 320),
+    "drop_attack7": (2000, 330),
 
 
 
@@ -333,8 +372,8 @@ def find_attack(drop=False):
         if match_btn:
             print("Found 'find match' button at:", match_btn)
             for _ in range(random.randint(1, 3)):
-                jitter_x = random.randint(-50, 50)
-                jitter_y = random.randint(-50, 50)
+                jitter_x = random.randint(-70, 70)
+                jitter_y = random.randint(-70, 70)
                 adb_tap(match_btn[0] + jitter_x, match_btn[1] + jitter_y)
                 time.sleep(random.uniform(0.2, 0.3))
             time.sleep(random.uniform(0.5, 2))
@@ -365,7 +404,7 @@ def find_attack(drop=False):
                 print("Clicking next button at:", next_btn)
                 time.sleep(random.uniform(0, 1))
                 for _ in range(random.randint(1, 5)):
-                    jitter_x = random.randint(-50, 50)
+                    jitter_x = random.randint(-80, 80)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(next_btn[0] + jitter_x, next_btn[1] + jitter_y)
                     time.sleep(random.uniform(0.2, 0.5))
@@ -376,14 +415,16 @@ def find_attack(drop=False):
 
         time.sleep(random.uniform(0, 3))
 
-        # Proceed to the attack phase.
-        attack_strat = random.randint(1, 2)
-        if attack_strat == 1:
-            print("Using attack strategy 1.")
-            attack()
-        else:
-            print("Using attack strategy 2.")
-            attack2()
+        attack()
+
+        # # Proceed to the attack phase.
+        # attack_strat = random.randint(1, 2)
+        # if attack_strat == 1:
+        #     print("Using attack strategy 1.")
+        #     attack()
+        # else:
+        #     print("Using attack strategy 2.")
+        #     attack2()
 
         # Break out of the loop if everything is done successfully.
         break
@@ -423,10 +464,12 @@ def drop_attack():
 
 def attack():
     print("Starting attack sequence...")
+    attack_strat = random.randint(1, 3)
+    left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down = get_drop_coords(attack_strat)
 
     # Step 1: Slight scroll down using human-like random swipe.
-    print("Scrolling down slightly...")
-    human_swipe(COORDS["scroll_down_start"])
+    # print("Scrolling down slightly...")
+    # human_swipe(COORDS["scroll_down_start"])
 
     # Step 2: Dynamically search for hero templates.
     print("Capturing hero positions dynamically...")
@@ -449,9 +492,9 @@ def attack():
         adb_tap(COORDS["valk_select_fallback"][0], COORDS["valk_select_fallback"][1])
         time.sleep(random.uniform(0.5, 0.7))
 
-    adb_tap(COORDS["valk_drop_bottom_left"][0], COORDS["valk_drop_bottom_left"][1])
+    adb_tap(left_x, left_y)
     time.sleep(random.uniform(0.5, 0.7))
-    adb_tap(COORDS["valk_drop_top_middle"][0], COORDS["valk_drop_top_middle"][1])
+    adb_tap(right_x, right_y)
     time.sleep(random.uniform(0.5, 0.7))
 
     
@@ -459,28 +502,28 @@ def attack():
         print("Found King at:", king_found)
         adb_tap(king_found[0], king_found[1])
         time.sleep(random.uniform(0.15, 0.4))
-        adb_tap(COORDS["midpoint_drop"][0], COORDS["midpoint_drop"][1])
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
 
     if queen_found:
         print("Found Queen at:", queen_found)
         adb_tap(queen_found[0], queen_found[1])
         time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["midpoint_drop"][0], COORDS["midpoint_drop"][1])
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.4))
 
     if warden_found:
         print("Found Warden at:", warden_found)
         adb_tap(warden_found[0], warden_found[1])
         time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["midpoint_drop"][0], COORDS["midpoint_drop"][1])
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.3))
 
     if royal_champion_found:
         print("Found Royal Champion at:", royal_champion_found)
         adb_tap(royal_champion_found[0], royal_champion_found[1])
         time.sleep(random.uniform(0.1, 0.4))
-        adb_tap(COORDS["midpoint_drop"][0], COORDS["midpoint_drop"][1])
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
 
     if valk_found:
@@ -493,7 +536,7 @@ def attack():
         time.sleep(random.uniform(0.2, 0.4))
 
     for _ in range(random.randint(5, 9)):
-        adb_tap(COORDS["midpoint_drop"][0], COORDS["midpoint_drop"][1])
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.3))
 
     if warden_found:
@@ -511,154 +554,188 @@ def attack():
         print("Found Baby Dragon at:", baby_dragon_found)
         adb_tap(baby_dragon_found[0], baby_dragon_found[1])
         time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["valk_drop_bottom_left"][0], COORDS["valk_drop_bottom_left"][1])
+        adb_tap(left_x, left_y)
         time.sleep(random.uniform(0.2, 0.4))
     
     if siege_found:
         print("Found Siege Barracks at:", siege_found)
         adb_tap(siege_found[0], siege_found[1])
         time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["valk_drop_top_middle"][0], COORDS["valk_drop_top_middle"][1])
+        adb_tap(right_x, right_y)
 
-    human_swipe_up(COORDS["scroll_up_start"])
-
-    time.sleep(random.uniform(9, 11))
-
-
-    # Step 4: Tap on the rage spell.
-    if rage_found:
-        print("Found Rage spell at:", rage_found)
-        adb_tap(rage_found[0], rage_found[1])
-        time.sleep(random.uniform(0.3, 0.6))
-        adb_tap(COORDS["rage_fallback1"][0], COORDS["rage_fallback1"][1])
-        time.sleep(random.uniform(0.5, 0.8))
-        adb_tap(COORDS["rage_fallback2"][0], COORDS["rage_fallback2"][1])
-        time.sleep(random.uniform(0.3, 0.6))
-        adb_tap(COORDS["rage_fallback3"][0], COORDS["rage_fallback3"][1])
-        time.sleep(random.uniform(2, 4))
-        adb_tap(rage_found[0], rage_found[1])
-        adb_tap(COORDS["rage_fallback4"][0], COORDS["rage_fallback4"][1])
-        time.sleep(random.uniform(0.5, 1))
-        adb_tap(COORDS["rage_fallback5"][0], COORDS["rage_fallback5"][1])
-
-def attack2():
-    print("Starting attack sequence...")
-
-    # Step 1: Slight scroll down using human-like random swipe.
-    print("Scrolling down slightly...")
-    human_swipe(COORDS["scroll_down_start"])
-
-    # Step 2: Dynamically search for hero templates.
-    print("Capturing hero positions dynamically...")
-    valk_found = wait_for_template("templates/valk.png", timeout=2)
-    king_found = wait_for_template("templates/king.png", timeout=2)
-    queen_found = wait_for_template("templates/queen.png", timeout=2)
-    warden_found = wait_for_template("templates/warden.png", timeout=2)
-    royal_champion_found = wait_for_template("templates/royal_champion.png", timeout=2)
-    siege_found = wait_for_template("templates/siege_barracks.png", timeout=2)
-    baby_dragon_found = wait_for_template("templates/baby_dragon.png", timeout=2)
-    rage_found = wait_for_template("templates/rage.png", timeout=2)
-
-    # Step 3: Tap on the troops if found.
-    if valk_found:
-        print("Found Valkyrie at:", valk_found)
-        adb_tap(valk_found[0], valk_found[1])
-        time.sleep(random.uniform(0.5, 1))
-    else:
-        print("Valkyrie not found.")
-        adb_tap(COORDS["valk_select_fallbackv2"][0], COORDS["valk_select_fallbackv2"][1])
-        time.sleep(random.uniform(0.3, 0.7))
-
-    adb_tap(COORDS["valk_drop_bottom_leftv2"][0], COORDS["valk_drop_bottom_leftv2"][1])
-    time.sleep(random.uniform(0.3, 0.7))
-    adb_tap(COORDS["valk_drop_top_middlev2"][0], COORDS["valk_drop_top_middlev2"][1])
-    time.sleep(random.uniform(0.3, 0.7))
-
-    
-    if king_found:
-        print("Found King at:", king_found)
-        adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(0.15, 0.4))
-        adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
-        time.sleep(random.uniform(0.15, 0.25))
-
-    if queen_found:
-        print("Found Queen at:", queen_found)
-        adb_tap(queen_found[0], queen_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
-        time.sleep(random.uniform(0.2, 0.4))
-
-    if warden_found:
-        print("Found Warden at:", warden_found)
-        adb_tap(warden_found[0], warden_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
-        time.sleep(random.uniform(0.2, 0.3))
-
-    if royal_champion_found:
-        print("Found Royal Champion at:", royal_champion_found)
-        adb_tap(royal_champion_found[0], royal_champion_found[1])
-        time.sleep(random.uniform(0.1, 0.4))
-        adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
-        time.sleep(random.uniform(0.15, 0.25))
-
-    if valk_found:
-        print("Found Valkyrie at:", valk_found)
-        adb_tap(valk_found[0], valk_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-    else:
-        print("Valkyrie not found.")
-        adb_tap(COORDS["valk_select_fallbackv2"][0], COORDS["valk_select_fallbackv2"][1])
-        time.sleep(random.uniform(0.2, 0.4))
-
-    for _ in range(random.randint(5, 9)):
-        adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
-        time.sleep(random.uniform(0.2, 0.3))
-
-    if warden_found:
-        print("Found Warden at:", warden_found)
-        time.sleep(random.uniform(0.5, 1))
-        adb_tap(warden_found[0], warden_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-    
-    if king_found:
-        print("Found King at:", king_found)
-        adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-
-    if baby_dragon_found:
-        print("Found Baby Dragon at:", baby_dragon_found)
-        adb_tap(baby_dragon_found[0], baby_dragon_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["valk_drop_bottom_leftv2"][0], COORDS["valk_drop_bottom_leftv2"][1])
-        time.sleep(random.uniform(0.2, 0.4))
-    
-    if siege_found:
-        print("Found Siege Barracks at:", siege_found)
-        adb_tap(siege_found[0], siege_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(COORDS["valk_drop_top_middlev2"][0], COORDS["valk_drop_top_middlev2"][1])
+    # human_swipe_up(COORDS["scroll_up_start"])
 
     time.sleep(random.uniform(9, 11))
 
-    human_swipe_up(COORDS["scroll_up_start"])
-
+    if attack_strat == 1:
     # Step 4: Tap on the rage spell.
-    if rage_found:
-        print("Found Rage spell at:", rage_found)
-        adb_tap(rage_found[0], rage_found[1])
-        time.sleep(random.uniform(0.3, 0.6))
-        adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1])
-        time.sleep(random.uniform(0.5, 0.8))
-        adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
-        time.sleep(random.uniform(0.3, 0.6))
-        adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1])
-        time.sleep(random.uniform(2, 4))
-        adb_tap(rage_found[0], rage_found[1])
-        adb_tap(COORDS["rage_fallback4v2"][0], COORDS["rage_fallback4v2"][1])
-        time.sleep(random.uniform(0.5, 1))
-        adb_tap(COORDS["rage_fallback5v2"][0], COORDS["rage_fallback5v2"][1])
+        jitter_x = random.randint(-50, 50)
+        jitter_y = random.randint(-50, 50)
+        if rage_found:
+            print("Found Rage spell at:", rage_found)
+            adb_tap(rage_found[0], rage_found[1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback1"][0], COORDS["rage_fallback1"][1])
+            time.sleep(random.uniform(0.5, 0.8))
+            adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback3"][0], COORDS["rage_fallback3"][1])
+            time.sleep(random.uniform(2, 4))
+            adb_tap(rage_found[0], rage_found[1])
+            adb_tap(COORDS["rage_fallback4"][0]+ jitter_x, COORDS["rage_fallback4"][1])
+            time.sleep(random.uniform(0.5, 1))
+            adb_tap(COORDS["rage_fallback5"][0]+ jitter_x, COORDS["rage_fallback5"][1])
+    elif attack_strat == 2:
+        if rage_found:
+            print("Found Rage spell at:", rage_found)
+            adb_tap(rage_found[0], rage_found[1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1] + jitter_y)
+            time.sleep(random.uniform(0.5, 0.8))
+            adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
+            time.sleep(random.uniform(2, 4))
+            adb_tap(rage_found[0], rage_found[1])
+            adb_tap(rage_top[0] + 100 + jitter_x, rage_top[1] + 100)
+            time.sleep(random.uniform(0.5, 1))
+            adb_tap(rage2_right_down[0] + 150 + jitter_x, rage2_right_down[1] - 50)
+    
+    elif attack_strat == 3:
+        if rage_found:
+            print("Found Rage spell at:", rage_found)
+            adb_tap(rage_found[0], rage_found[1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1])
+            time.sleep(random.uniform(0.5, 0.8))
+            adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
+            time.sleep(random.uniform(0.3, 0.6))
+            adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
+            time.sleep(random.uniform(2, 4))
+            adb_tap(rage_found[0], rage_found[1])
+            adb_tap(COORDS["rage_fallback4v2"][0] + jitter_x, COORDS["rage_fallback4v2"][1])
+            time.sleep(random.uniform(0.5, 1))
+            adb_tap(COORDS["rage_fallback5v2"][0] + jitter_x, COORDS["rage_fallback5v2"][1] + jitter_y)
+
+
+# def attack2():
+#     print("Starting attack sequence...")
+
+#     # Step 1: Slight scroll down using human-like random swipe.
+#     # print("Scrolling down slightly...")
+#     # human_swipe(COORDS["scroll_down_start"])
+
+#     # Step 2: Dynamically search for hero templates.
+#     print("Capturing hero positions dynamically...")
+#     valk_found = wait_for_template("templates/valk.png", timeout=2)
+#     king_found = wait_for_template("templates/king.png", timeout=2)
+#     queen_found = wait_for_template("templates/queen.png", timeout=2)
+#     warden_found = wait_for_template("templates/warden.png", timeout=2)
+#     royal_champion_found = wait_for_template("templates/royal_champion.png", timeout=2)
+#     siege_found = wait_for_template("templates/siege_barracks.png", timeout=2)
+#     baby_dragon_found = wait_for_template("templates/baby_dragon.png", timeout=2)
+#     rage_found = wait_for_template("templates/rage.png", timeout=2)
+
+#     # Step 3: Tap on the troops if found.
+#     if valk_found:
+#         print("Found Valkyrie at:", valk_found)
+#         adb_tap(valk_found[0], valk_found[1])
+#         time.sleep(random.uniform(0.5, 1))
+#     else:
+#         print("Valkyrie not found.")
+#         adb_tap(COORDS["valk_select_fallbackv2"][0], COORDS["valk_select_fallbackv2"][1])
+#         time.sleep(random.uniform(0.3, 0.7))
+
+#     adb_tap(COORDS["valk_drop_bottom_leftv2"][0], COORDS["valk_drop_bottom_leftv2"][1])
+#     time.sleep(random.uniform(0.3, 0.7))
+#     adb_tap(COORDS["valk_drop_top_middlev2"][0], COORDS["valk_drop_top_middlev2"][1])
+#     time.sleep(random.uniform(0.3, 0.7))
+
+    
+#     if king_found:
+#         print("Found King at:", king_found)
+#         adb_tap(king_found[0], king_found[1])
+#         time.sleep(random.uniform(0.15, 0.4))
+#         adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
+#         time.sleep(random.uniform(0.15, 0.25))
+
+#     if queen_found:
+#         print("Found Queen at:", queen_found)
+#         adb_tap(queen_found[0], queen_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+#         adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
+#         time.sleep(random.uniform(0.2, 0.4))
+
+#     if warden_found:
+#         print("Found Warden at:", warden_found)
+#         adb_tap(warden_found[0], warden_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+#         adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
+#         time.sleep(random.uniform(0.2, 0.3))
+
+#     if royal_champion_found:
+#         print("Found Royal Champion at:", royal_champion_found)
+#         adb_tap(royal_champion_found[0], royal_champion_found[1])
+#         time.sleep(random.uniform(0.1, 0.4))
+#         adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
+#         time.sleep(random.uniform(0.15, 0.25))
+
+#     if valk_found:
+#         print("Found Valkyrie at:", valk_found)
+#         adb_tap(valk_found[0], valk_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+#     else:
+#         print("Valkyrie not found.")
+#         adb_tap(COORDS["valk_select_fallbackv2"][0], COORDS["valk_select_fallbackv2"][1])
+#         time.sleep(random.uniform(0.2, 0.4))
+
+#     for _ in range(random.randint(5, 9)):
+#         adb_tap(COORDS["midpoint_dropv2"][0], COORDS["midpoint_dropv2"][1])
+#         time.sleep(random.uniform(0.2, 0.3))
+
+#     if warden_found:
+#         print("Found Warden at:", warden_found)
+#         time.sleep(random.uniform(0.5, 1))
+#         adb_tap(warden_found[0], warden_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+    
+#     if king_found:
+#         print("Found King at:", king_found)
+#         adb_tap(king_found[0], king_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+
+#     if baby_dragon_found:
+#         print("Found Baby Dragon at:", baby_dragon_found)
+#         adb_tap(baby_dragon_found[0], baby_dragon_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+#         adb_tap(COORDS["valk_drop_bottom_leftv2"][0], COORDS["valk_drop_bottom_leftv2"][1])
+#         time.sleep(random.uniform(0.2, 0.4))
+    
+#     if siege_found:
+#         print("Found Siege Barracks at:", siege_found)
+#         adb_tap(siege_found[0], siege_found[1])
+#         time.sleep(random.uniform(0.2, 0.4))
+#         adb_tap(COORDS["valk_drop_top_middlev2"][0], COORDS["valk_drop_top_middlev2"][1])
+
+#     time.sleep(random.uniform(9, 11))
+
+#     # human_swipe_up(COORDS["scroll_up_start"])
+
+#     # Step 4: Tap on the rage spell.
+#     if rage_found:
+#         print("Found Rage spell at:", rage_found)
+#         adb_tap(rage_found[0], rage_found[1])
+#         time.sleep(random.uniform(0.3, 0.6))
+#         adb_tap(COORDS["rage_fallback1v2"][0], COORDS["rage_fallback1v2"][1])
+#         time.sleep(random.uniform(0.5, 0.8))
+#         adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
+#         time.sleep(random.uniform(0.3, 0.6))
+#         adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1])
+#         time.sleep(random.uniform(2, 4))
+#         adb_tap(rage_found[0], rage_found[1])
+#         adb_tap(COORDS["rage_fallback4v2"][0], COORDS["rage_fallback4v2"][1])
+#         time.sleep(random.uniform(0.5, 1))
+#         adb_tap(COORDS["rage_fallback5v2"][0], COORDS["rage_fallback5v2"][1])
      
 
 def main():
@@ -668,11 +745,17 @@ def main():
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4800:
+            if trophies > 4700 and trophies < 5200:
                 drop_trophies()
                 # Optionally, wait some time after dropping trophies before proceeding.
                 time.sleep(random.uniform(0, 1))
                 continue  # Skip this iteration and re-check trophy count next time.
+            else:
+                tries = 0
+                while trophies > 5200 and tries < 3:
+                    print(f"Misread detected (trophies = {trophies}). Retrying read ({tries + 1}/3)...")
+                    trophies = read_trophies()
+                    tries += 1
 
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(False)
