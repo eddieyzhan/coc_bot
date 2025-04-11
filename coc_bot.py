@@ -46,7 +46,7 @@ def read_trophies():
     else:
         return None
 
-def adb_tap(x, y, jitter=15):
+def adb_tap(x, y, jitter=5):
     """
     Sends a tap command via ADB at (x, y) with an added random jitter.
     """
@@ -98,138 +98,138 @@ def wait_for_template(template_path, timeout=3, threshold=0.85):
             return (coords[0], coords[1])
     return None
 
-def human_swipe(base_start):
-    """
-    Simulates a human-like swipe from a randomized start position (near base_start) 
-    to an ideal end position with a limited error margin.
+# def human_swipe(base_start):
+#     """
+#     Simulates a human-like swipe from a randomized start position (near base_start) 
+#     to an ideal end position with a limited error margin.
     
-    The swipe gesture can be performed in 1, 2, or 3 segments randomly:
-      - If 1 swipe, the movement goes directly from the randomized start to the ideal end.
-      - If 2 swipes, the gesture first swipes in a random direction, then corrects the 
-        movement by swiping from the intermediate point to the ideal end.
-      - If 3 swipes, two random intermediate swipes are performed followed by a 
-        final correction swipe to the ideal end.
+#     The swipe gesture can be performed in 1, 2, or 3 segments randomly:
+#       - If 1 swipe, the movement goes directly from the randomized start to the ideal end.
+#       - If 2 swipes, the gesture first swipes in a random direction, then corrects the 
+#         movement by swiping from the intermediate point to the ideal end.
+#       - If 3 swipes, two random intermediate swipes are performed followed by a 
+#         final correction swipe to the ideal end.
     
-    The durations of each swipe are randomized between 500 and 800 milliseconds.
-    """
-    # Randomize the starting point from the base_start within a wide margin.
-    start_x = base_start[0] + random.randint(-200, 200)
-    start_y = base_start[1] + random.randint(-100, 100)
+#     The durations of each swipe are randomized between 500 and 800 milliseconds.
+#     """
+#     # Randomize the starting point from the base_start within a wide margin.
+#     start_x = base_start[0] + random.randint(-200, 200)
+#     start_y = base_start[1] + random.randint(-100, 100)
 
-    # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
-    end_y = start_y + 270 + random.randint(-20, 20)
-    end_x = start_x + random.randint(-20, 20)
+#     # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
+#     end_y = start_y + 270 + random.randint(-20, 20)
+#     end_x = start_x + random.randint(-20, 20)
 
-    # Randomly decide how many swipe segments to execute (1, 2, or 3).
-    swipe_times = random.randint(1, 3)
+#     # Randomly decide how many swipe segments to execute (1, 2, or 3).
+#     swipe_times = random.randint(1, 3)
     
-    if swipe_times == 1:
-        # Single continuous swipe to the ideal end position.
-        total_duration = random.randint(2000, 2200)
-        adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+#     if swipe_times == 1:
+#         # Single continuous swipe to the ideal end position.
+#         total_duration = random.randint(2000, 2200)
+#         adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
     
-    elif swipe_times == 2:
-        # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
-        # Generate a random offset for the intermediate endpoint.
-        random_x = random.randint(-150, 150)
-        random_y = random.randint(-150, 150)
-        intermediate_x = end_x + random_x
-        intermediate_y = end_y + random_y
+#     elif swipe_times == 2:
+#         # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
+#         # Generate a random offset for the intermediate endpoint.
+#         random_x = random.randint(-150, 150)
+#         random_y = random.randint(-150, 150)
+#         intermediate_x = end_x + random_x
+#         intermediate_y = end_y + random_y
         
-        # First swipe from the randomized start to the intermediate point.
-        total_duration = random.randint(1500, 2000)
-        adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         # First swipe from the randomized start to the intermediate point.
+#         total_duration = random.randint(1500, 2000)
+#         adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
         
-        # Second swipe correcting the trajectory back to the ideal end.
-        total_duration = random.randint(1500, 2000)
-        adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
+#         # Second swipe correcting the trajectory back to the ideal end.
+#         total_duration = random.randint(1500, 2000)
+#         adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
     
-    else:
-        # Three swipes: two random intermediate swipes followed by a final correction swipe.
-        # First swipe: move to a first intermediate point.
-        random_x1 = random.randint(-125, 125)
-        random_y1 = random.randint(-125, 125)
-        intermediate1_x = start_x + random_x1
-        intermediate1_y = start_y + random_y1
+#     else:
+#         # Three swipes: two random intermediate swipes followed by a final correction swipe.
+#         # First swipe: move to a first intermediate point.
+#         random_x1 = random.randint(-125, 125)
+#         random_y1 = random.randint(-125, 125)
+#         intermediate1_x = start_x + random_x1
+#         intermediate1_y = start_y + random_y1
 
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
 
-        # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
-        random_x2 = random.randint(-125, 125)
-        random_y2 = random.randint(-125, 125)
-        intermediate2_x = end_x + random_x2
-        intermediate2_y = end_y + random_y2
+#         # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
+#         random_x2 = random.randint(-125, 125)
+#         random_y2 = random.randint(-125, 125)
+#         intermediate2_x = end_x + random_x2
+#         intermediate2_y = end_y + random_y2
 
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
 
-        # Third swipe: final correction to the ideal end position.
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
+#         # Third swipe: final correction to the ideal end position.
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
 
-def human_swipe_up(base_start):
-    # Randomize the starting point from the base_start within a wide margin.
-    start_x = base_start[0] + random.randint(-150, 150)
-    start_y = base_start[1] + random.randint(-100, 100)
+# def human_swipe_up(base_start):
+#     # Randomize the starting point from the base_start within a wide margin.
+#     start_x = base_start[0] + random.randint(-150, 150)
+#     start_y = base_start[1] + random.randint(-100, 100)
 
-    # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
-    end_y = start_y - 270 + random.randint(-20, 20)
-    end_x = start_x + random.randint(-20, 20)
+#     # Calculate the ideal end (with a slight vertical movement of around 215 pixels) plus a small random error.
+#     end_y = start_y - 270 + random.randint(-20, 20)
+#     end_x = start_x + random.randint(-20, 20)
 
-    # Randomly decide how many swipe segments to execute (1, 2, or 3).
-    swipe_times = random.randint(1, 3)
+#     # Randomly decide how many swipe segments to execute (1, 2, or 3).
+#     swipe_times = random.randint(1, 3)
     
-    if swipe_times == 1:
-        # Single continuous swipe to the ideal end position.
-        total_duration = random.randint(2000, 2200)
-        adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
+#     if swipe_times == 1:
+#         # Single continuous swipe to the ideal end position.
+#         total_duration = random.randint(2000, 2200)
+#         adb_swipe(start_x, start_y, end_x, end_y, duration=total_duration)
     
-    elif swipe_times == 2:
-        # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
-        # Generate a random offset for the intermediate endpoint.
-        random_x = random.randint(-150, 150)
-        random_y = random.randint(-150, 150)
-        intermediate_x = end_x + random_x
-        intermediate_y = end_y + random_y
+#     elif swipe_times == 2:
+#         # Two swipes: first swipe in a random direction, then a correction swipe to the ideal end.
+#         # Generate a random offset for the intermediate endpoint.
+#         random_x = random.randint(-150, 150)
+#         random_y = random.randint(-150, 150)
+#         intermediate_x = end_x + random_x
+#         intermediate_y = end_y + random_y
         
-        # First swipe from the randomized start to the intermediate point.
-        total_duration = random.randint(1500, 2000)
-        adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         # First swipe from the randomized start to the intermediate point.
+#         total_duration = random.randint(1500, 2000)
+#         adb_swipe(start_x, start_y, intermediate_x, intermediate_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
         
-        # Second swipe correcting the trajectory back to the ideal end.
-        total_duration = random.randint(1500, 2000)
-        adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
+#         # Second swipe correcting the trajectory back to the ideal end.
+#         total_duration = random.randint(1500, 2000)
+#         adb_swipe(intermediate_x, intermediate_y, end_x, end_y, duration=total_duration)
     
-    else:
-        # Three swipes: two random intermediate swipes followed by a final correction swipe.
-        # First swipe: move to a first intermediate point.
-        random_x1 = random.randint(-125, 125)
-        random_y1 = random.randint(-125, 125)
-        intermediate1_x = start_x + random_x1
-        intermediate1_y = start_y + random_y1
+#     else:
+#         # Three swipes: two random intermediate swipes followed by a final correction swipe.
+#         # First swipe: move to a first intermediate point.
+#         random_x1 = random.randint(-125, 125)
+#         random_y1 = random.randint(-125, 125)
+#         intermediate1_x = start_x + random_x1
+#         intermediate1_y = start_y + random_y1
 
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(start_x, start_y, intermediate1_x, intermediate1_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
 
-        # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
-        random_x2 = random.randint(-125, 125)
-        random_y2 = random.randint(-125, 125)
-        intermediate2_x = end_x + random_x2
-        intermediate2_y = end_y + random_y2
+#         # Second swipe: move from intermediate1 towards a second intermediate point (offset relative to ideal).
+#         random_x2 = random.randint(-125, 125)
+#         random_y2 = random.randint(-125, 125)
+#         intermediate2_x = end_x + random_x2
+#         intermediate2_y = end_y + random_y2
 
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
-        time.sleep(random.uniform(0.5, 1))
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(intermediate1_x, intermediate1_y, intermediate2_x, intermediate2_y, duration=total_duration)
+#         time.sleep(random.uniform(0.5, 1))
 
-        # Third swipe: final correction to the ideal end position.
-        total_duration = random.randint(1000, 1100)
-        adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
+#         # Third swipe: final correction to the ideal end position.
+#         total_duration = random.randint(1000, 1100)
+#         adb_swipe(intermediate2_x, intermediate2_y, end_x, end_y, duration=total_duration)
 
 def get_drop_coords(number=1):
     rage_mid = (1202, 104)
@@ -244,29 +244,32 @@ def get_drop_coords(number=1):
 
 
     if number == 1:
+        print("Using attack strategy 1.")
         left_x = random.randint(198, 230)
         right_x = random.randint(700, 750)
         mid_x = random.randint(450, 500)
-        left_y = round(-0.72 * left_x + 608.5 + random.randint(-10, 10))
-        right_y = round(-0.72 * right_x + 608.5 + random.randint(-10, 10))
-        mid_y = round(-0.72 * mid_x + 608.5 + random.randint(-10, 10))
+        left_y = round(-0.72 * left_x + 605 + random.randint(-10, 10))
+        right_y = round(-0.72 * right_x + 605 + random.randint(-10, 10))
+        mid_y = round(-0.72 * mid_x + 605 + random.randint(-10, 10))
         return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
     elif number == 2:
+        print("Using attack strategy 2.")   
         left_x = random.randint(209, 240)
         right_x = random.randint(400, 450)
         mid_x = random.randint(320, 350)
-        left_y = round(0.624 * left_x + 425.58 + random.randint(-10, 10))
-        right_y = round(0.624 * right_x + 425.58 + random.randint(-10, 10))
-        mid_y = round(0.624 * mid_x + 425.58 + random.randint(-10, 10))
+        left_y = round(0.624 * left_x + 430 + random.randint(-10, 10))
+        right_y = round(0.624 * right_x + 430 + random.randint(-10, 10))
+        mid_y = round(0.624 * mid_x + 430 + random.randint(-10, 10))
         return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down
     elif number == 3:
-        left_x = random.randint(1643, 1685)
+        print("Using attack strategy 3.")
+        left_x = random.randint(1643, 1675)
         right_x = random.randint(2179, 2217)
         mid_x = random.randint(1900, 1960)
-        left_y = round(0.74 * left_x - 1150 + random.randint(-10, 10))
-        right_y = round(0.74 * right_x - 1150 + random.randint(-10, 10))
-        mid_y = round(0.74 * mid_x - 1150 + random.randint(-10, 10))
-        return left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_left_up, rage2_left_down
+        left_y = round(0.74 * left_x - 1110 + random.randint(-10, 10))
+        right_y = round(0.74 * right_x - 1115 + random.randint(-10, 10))
+        mid_y = round(0.74 * mid_x - 1110 + random.randint(-10, 10))
+        return left_x, left_y, right_x, right_y, mid_x + 5, mid_y, rage_mid, rage_top, rage_bot, rage2_left_up, rage2_left_down
         
 
 
@@ -278,10 +281,10 @@ COORDS = {
     "drop_attack1": (198, 466),
     "drop_attack2": (751, 68),
     "drop_attack3": (209, 556),
-    "drop_attack4": (454, 709),
+    "drop_attack4": (454, 729),
     "drop_attack5": (2217, 490),
     "drop_attack6": (400, 320),
-    "drop_attack7": (2000, 330),
+    "drop_attack7": (2070, 330),
 
 
 
@@ -385,7 +388,6 @@ def find_attack(drop=False):
         if drop:
             print("Using drop strategy")
             drop_attack()
-            time.sleep(random.uniform(0, 2))
             break
 
         # Randomly click the 'next' button 0 to 5 times.
@@ -440,27 +442,32 @@ def drop_attack():
     if king_found:
         print("Found King at:", king_found)
         adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(1, 1.5))
+        time.sleep(random.uniform(0.75, 1.5))
         adb_tap(COORDS["drop_attack" + str(random_start)][0], COORDS["drop_attack" + str(random_start)][1])
-        time.sleep(random.uniform(1, 1.5))
+        time.sleep(random.uniform(0.1, 0.3))
+        adb_tap(COORDS["drop_attack" + str(random_start)][0], COORDS["drop_attack" + str(random_start)][1])
     
     surrender = wait_for_template("templates/surrender.png", timeout=5)
     
     if surrender:
         print("Found Surrender button at:", surrender)
-        adb_tap(surrender[0], surrender[1])
-        time.sleep(random.uniform(0.25, 0.4))
+        jitter_x = random.randint(-100, 100)
+        jitter_y = random.randint(-20, 20)
+        adb_tap(surrender[0] + jitter_x, surrender[1] + jitter_y)
+        time.sleep(random.uniform(0, 1))
 
 
     okay = wait_for_template("templates/okay.png", timeout=5)
 
     if okay:
         print("Found Okay button at:", okay)
-        time.sleep(random.uniform(1, 1.5))
+        time.sleep(random.uniform(0, 1.5))
         for _ in range(random.randint(1, 2)):
-            adb_tap(okay[0], okay[1])
+            jitter_x = random.randint(-50, 50)
+            jitter_y = random.randint(-20, 20)
+            adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
             time.sleep(random.uniform(0.25, 0.4))
-        time.sleep(random.uniform(0.5, 1))
+
 
 def attack():
     print("Starting attack sequence...")
@@ -470,6 +477,8 @@ def attack():
     # Step 1: Slight scroll down using human-like random swipe.
     # print("Scrolling down slightly...")
     # human_swipe(COORDS["scroll_down_start"])
+    
+    next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
     # Step 2: Dynamically search for hero templates.
     print("Capturing hero positions dynamically...")
@@ -504,10 +513,15 @@ def attack():
         time.sleep(random.uniform(0.15, 0.4))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.15, 0.25))
+
 
     if queen_found:
         print("Found Queen at:", queen_found)
         adb_tap(queen_found[0], queen_found[1])
+        time.sleep(random.uniform(0.2, 0.4))
+        adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.4))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.4))
@@ -518,11 +532,15 @@ def attack():
         time.sleep(random.uniform(0.2, 0.4))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.2, 0.3))
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.2, 0.3))
 
     if royal_champion_found:
         print("Found Royal Champion at:", royal_champion_found)
         adb_tap(royal_champion_found[0], royal_champion_found[1])
         time.sleep(random.uniform(0.1, 0.4))
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.15, 0.25))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
 
@@ -567,10 +585,11 @@ def attack():
 
     time.sleep(random.uniform(9, 11))
 
+    jitter_x = random.randint(-50, 50)
+    jitter_y = random.randint(-50, 50)
     if attack_strat == 1:
     # Step 4: Tap on the rage spell.
-        jitter_x = random.randint(-50, 50)
-        jitter_y = random.randint(-50, 50)
+
         if rage_found:
             print("Found Rage spell at:", rage_found)
             adb_tap(rage_found[0], rage_found[1])
@@ -580,7 +599,7 @@ def attack():
             adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1])
             time.sleep(random.uniform(0.3, 0.6))
             adb_tap(COORDS["rage_fallback3"][0], COORDS["rage_fallback3"][1])
-            time.sleep(random.uniform(2, 4))
+            time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
             adb_tap(COORDS["rage_fallback4"][0]+ jitter_x, COORDS["rage_fallback4"][1])
             time.sleep(random.uniform(0.5, 1))
@@ -595,7 +614,7 @@ def attack():
             adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
             time.sleep(random.uniform(0.3, 0.6))
             adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
-            time.sleep(random.uniform(2, 4))
+            time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
             adb_tap(rage_top[0] + 100 + jitter_x, rage_top[1] + 100)
             time.sleep(random.uniform(0.5, 1))
@@ -611,7 +630,7 @@ def attack():
             adb_tap(COORDS["rage_fallback2v2"][0], COORDS["rage_fallback2v2"][1])
             time.sleep(random.uniform(0.3, 0.6))
             adb_tap(COORDS["rage_fallback3v2"][0], COORDS["rage_fallback3v2"][1] + jitter_y)
-            time.sleep(random.uniform(2, 4))
+            time.sleep(random.uniform(5, 8))
             adb_tap(rage_found[0], rage_found[1])
             adb_tap(COORDS["rage_fallback4v2"][0] + jitter_x, COORDS["rage_fallback4v2"][1])
             time.sleep(random.uniform(0.5, 1))
