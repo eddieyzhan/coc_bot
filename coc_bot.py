@@ -342,6 +342,12 @@ def find_attack(drop=False):
             print("Find match button not found within 3 seconds.")
             # Restart the loop if this part fails.
             continue
+        
+        if drop:
+            print("Using drop strategy")
+            drop_attack()
+            time.sleep(random.uniform(1, 2))
+            break
 
         # Randomly click the 'next' button 0 to 5 times.
         clicks = random.randint(0, 3)
@@ -371,11 +377,6 @@ def find_attack(drop=False):
 
         time.sleep(random.uniform(10, 15))
 
-        if drop:
-            print("Using drop strategy")
-            drop_attack()
-            time.sleep(random.uniform(1, 2))
-            break
         # Proceed to the attack phase.
         attack_strat = random.randint(1, 2)
         if attack_strat == 1:
@@ -407,11 +408,9 @@ def drop_attack():
     
     if surrender:
         print("Found Surrender button at:", surrender)
-        time.sleep(random.uniform(1, 2))
-        for _ in range(random.randint(1, 2)):
-            adb_tap(surrender[0], surrender[1])
-            time.sleep(random.uniform(0.25, 0.4))
-        time.sleep(random.uniform(0.5, 1))
+        adb_tap(surrender[0], surrender[1])
+        time.sleep(random.uniform(0.25, 0.4))
+
 
     okay = wait_for_template("templates/okay.png", timeout=5)
 
@@ -670,7 +669,7 @@ def main():
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4800:
+            if trophies > 2000:
                 drop_trophies()
                 # Optionally, wait some time after dropping trophies before proceeding.
                 time.sleep(random.uniform(1, 2))
