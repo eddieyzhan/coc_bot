@@ -46,7 +46,7 @@ def read_trophies():
     else:
         return None
 
-def adb_tap(x, y, jitter=3):
+def adb_tap(x, y, jitter=2):
     """
     Sends a tap command via ADB at (x, y) with an added random jitter.
     """
@@ -465,17 +465,23 @@ def drop_attack():
         adb_tap(surrender[0] + jitter_x, surrender[1] + jitter_y)
         time.sleep(random.uniform(0, 1))
 
+        okay = wait_for_template("templates/okay.png", timeout=5)
+        if okay:
+            print("Found Okay button at:", okay)
+            time.sleep(random.uniform(0, 1.5))
+            for _ in range(random.randint(1, 2)):
+                jitter_x = random.randint(-50, 50)
+                jitter_y = random.randint(-20, 20)
+                adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
+                time.sleep(random.uniform(0.25, 0.4))
+    else:
+        jitter_x = random.randint(-100, 100)
+        jitter_y = random.randint(-20, 20)
+        adb_tap(217 + jitter_x, 803 + jitter_y)
 
-    okay = wait_for_template("templates/okay.png", timeout=5)
 
-    if okay:
-        print("Found Okay button at:", okay)
-        time.sleep(random.uniform(0, 1.5))
-        for _ in range(random.randint(1, 2)):
-            jitter_x = random.randint(-50, 50)
-            jitter_y = random.randint(-20, 20)
-            adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
-            time.sleep(random.uniform(0.25, 0.4))
+
+
 
 
 def attack():
@@ -774,7 +780,7 @@ def main():
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4700 and trophies < 5200:
+            if trophies > 4600 and trophies < 5200:
                 drop_trophies()
                 # Optionally, wait some time after dropping trophies before proceeding.
                 time.sleep(random.uniform(0, 1))
