@@ -103,11 +103,6 @@ def find_attack(drop=False):
             # Restart the loop if this part fails.
             continue
 
-        if drop:
-            print("Using drop strategy")
-            drop_attack()
-            break
-
         # Randomly click the 'next' button 0 to 5 times.
         clicks = random.randint(0, 3)
         for _ in range(clicks):
