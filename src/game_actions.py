@@ -1,6 +1,6 @@
 import time
 import random
-from adb_utils import adb_tap, adb_swipe, capture_screen
+from adb_utils import adb_tap, capture_screen
 from image_utils import wait_for_template, find_template
 from coordinates import COORDS
 
@@ -51,18 +51,18 @@ def drop_trophies():
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(True)
         print("Waiting for 'return home' indicator...")
-        timeout = 180
+        timeout = 240
         start_time = time.time()
         while time.time() - start_time < timeout:
-            ret_home = wait_for_template("../templates/return_home.png", timeout=3)
+            ret_home = wait_for_template("templates/return_home.png", timeout=3)
             if ret_home:
                 print("Return home detected at:", ret_home)
-                time.sleep(random.uniform(0.5, 1))
-                for _ in range(random.randint(2, 3)):
+                time.sleep(random.uniform(1, 2))
+                for _ in range(random.randint(1, 2)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
-                    time.sleep(random.uniform(0.75, 1))
+                    time.sleep(random.uniform(0.2, 0.3))
                 time.sleep(random.uniform(0.5, 1))
                 break
             time.sleep(1)
@@ -73,7 +73,7 @@ def find_attack(drop=False):
     while True:
         time.sleep(random.uniform(0, 1))
         print("Searching for 'attack' button...")
-        attack_btn = wait_for_template("../templates/attack_button.png", timeout=10)
+        attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
         if attack_btn:
             print("Found attack button at:", attack_btn)
             jitter_x = random.randint(-50, 50)
@@ -89,7 +89,7 @@ def find_attack(drop=False):
             time.sleep(random.uniform(0.5, 3))
 
         print("Searching for 'find match' button...")
-        match_btn = wait_for_template("../templates/find_match.png", timeout=3)
+        match_btn = wait_for_template("templates/find_match.png", timeout=3)
         if match_btn:
             print("Found 'find match' button at:", match_btn)
             for _ in range(random.randint(1, 3)):
@@ -103,6 +103,11 @@ def find_attack(drop=False):
             # Restart the loop if this part fails.
             continue
 
+        if drop:
+            print("Using drop strategy")
+            drop_attack()
+            break
+
         # Randomly click the 'next' button 0 to 5 times.
         clicks = random.randint(0, 3)
         for _ in range(clicks):
@@ -114,7 +119,7 @@ def find_attack(drop=False):
                     random_y = random.randint(100, 500)
                     adb_tap(random_x, random_y)
                     time.sleep(random.uniform(1, 2))
-            next_btn = wait_for_template("../templates/next_button.png", timeout=20)
+            next_btn = wait_for_template("templates/next_button.png", timeout=20)
             if next_btn:
                 print("Clicking next button at:", next_btn)
                 time.sleep(random.uniform(0, 1))
@@ -131,27 +136,16 @@ def find_attack(drop=False):
         time.sleep(random.uniform(0, 3))
 
         attack()
-
-        # # Proceed to the attack phase.
-        # attack_strat = random.randint(1, 2)
-        # if attack_strat == 1:
-        #     print("Using attack strategy 1.")
-        #     attack()
-        # else:
-        #     print("Using attack strategy 2.")
-        #     attack2()
-
-        # Break out of the loop if everything is done successfully.
         break
 
 def drop_attack():
     attack_strat = random.randint(1, 3)
     left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down = get_drop_coords(attack_strat)
 
-    next_btn = wait_for_template("../templates/next_button.png", timeout=15)
+    next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
     print("Capturing hero positions dynamically...")
-    king_found = wait_for_template("../templates/king.png", timeout=3)
+    king_found = wait_for_template("templates/king.png", timeout=3)
 
     if king_found:
         print("Found King at:", king_found)
@@ -169,7 +163,7 @@ def drop_attack():
             adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0, 2))
     
-    surrender = wait_for_template("../templates/surrender.png", timeout=5)
+    surrender = wait_for_template("templates/surrender.png", timeout=5)
     
     if surrender:
         print("Found Surrender button at:", surrender)
@@ -178,7 +172,7 @@ def drop_attack():
         adb_tap(surrender[0] + jitter_x, surrender[1] + jitter_y)
         time.sleep(random.uniform(0, 1))
 
-        okay = wait_for_template("../templates/okay.png", timeout=5)
+        okay = wait_for_template("templates/okay.png", timeout=5)
         if okay:
             print("Found Okay button at:", okay)
             time.sleep(random.uniform(0, 1.5))
@@ -188,6 +182,7 @@ def drop_attack():
                 adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
                 time.sleep(random.uniform(0.25, 0.4))
     else:
+        print("Surrender button not found, pressing backup end battle button")
         jitter_x = random.randint(-100, 100)
         jitter_y = random.randint(-20, 20)
         adb_tap(217 + jitter_x, 803 + jitter_y)
@@ -196,25 +191,22 @@ def attack():
     print("Starting attack sequence...")
     attack_strat = random.randint(1, 3)
     left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down = get_drop_coords(attack_strat)
-
-    # Step 1: Slight scroll down using human-like random swipe.
-    # print("Scrolling down slightly...")
-    # human_swipe(COORDS["scroll_down_start"])
     
-    next_btn = wait_for_template("../templates/next_button.png", timeout=15)
+    next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
-    # Step 2: Dynamically search for hero templates.
+    # Step 1: Dynamically search for hero templates.
     print("Capturing hero positions dynamically...")
-    valk_found = wait_for_template("../templates/valk.png", timeout=2)
-    king_found = wait_for_template("../templates/king.png", timeout=2)
-    queen_found = wait_for_template("../templates/queen.png", timeout=2)
-    warden_found = wait_for_template("../templates/warden.png", timeout=2)
-    royal_champion_found = wait_for_template("../templates/royal_champion.png", timeout=2)
-    siege_found = wait_for_template("../templates/siege_barracks.png", timeout=2)
-    baby_dragon_found = wait_for_template("../templates/baby_dragon.png", timeout=2)
-    rage_found = wait_for_template("../templates/rage.png", timeout=2)
+    valk_found = wait_for_template("templates/valk.png", timeout=2)
+    king_found = wait_for_template("templates/king.png", timeout=2)
+    queen_found = wait_for_template("templates/queen.png", timeout=2)
+    warden_found = wait_for_template("templates/warden.png", timeout=2)
+    royal_champion_found = wait_for_template("templates/royal_champion.png", timeout=2)
+    prince_found = wait_for_template("templates/minion_prince.png", timeout=2)
+    siege_found = wait_for_template("templates/siege_barracks.png", timeout=2)
+    baby_dragon_found = wait_for_template("templates/baby_dragon.png", timeout=2)
+    rage_found = wait_for_template("templates/rage.png", timeout=2)
 
-    # Step 3: Tap on the troops if found.
+    # Step 2: Tap on the troops if found.
     if valk_found:
         print("Found Valkyrie at:", valk_found)
         adb_tap(valk_found[0], valk_found[1])
@@ -229,7 +221,6 @@ def attack():
     adb_tap(right_x, right_y)
     time.sleep(random.uniform(0.5, 0.7))
 
-    
     if king_found:
         print("Found King at:", king_found)
         adb_tap(king_found[0], king_found[1])
@@ -238,7 +229,6 @@ def attack():
         time.sleep(random.uniform(0.15, 0.25))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
-
 
     if queen_found:
         print("Found Queen at:", queen_found)
@@ -262,6 +252,15 @@ def attack():
         print("Found Royal Champion at:", royal_champion_found)
         adb_tap(royal_champion_found[0], royal_champion_found[1])
         time.sleep(random.uniform(0.1, 0.4))
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.15, 0.25))
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.15, 0.25))
+
+    if prince_found:
+        print("Found Prince at:", prince_found)
+        adb_tap(prince_found[0], prince_found[1])
+        time.sleep(random.uniform(0.15, 0.4))
         adb_tap(mid_x, mid_y)
         time.sleep(random.uniform(0.15, 0.25))
         adb_tap(mid_x, mid_y)
@@ -304,15 +303,13 @@ def attack():
         time.sleep(random.uniform(0.2, 0.4))
         adb_tap(right_x, right_y)
 
-    # human_swipe_up(COORDS["scroll_up_start"])
-
     time.sleep(random.uniform(9, 11))
 
     jitter_x = random.randint(-50, 50)
     jitter_y = random.randint(-50, 50)
     if attack_strat == 1:
-    # Step 4: Tap on the rage spell.
 
+    # Step 3: Tap on the rage spell.
         if rage_found:
             print("Found Rage spell at:", rage_found)
             adb_tap(rage_found[0], rage_found[1])

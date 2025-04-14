@@ -7,12 +7,9 @@ COORDS = {
     "drop_attack6": (400, 320),
     "drop_attack7": (2070, 330),
 
-
-
     "backup_attack": (218, 947),
     "zoom_out_start": (1130, 310),
     "zoom_out_end": (1090, 525),
-
 
     "scroll_down_start": (1130, 275),
     "scroll_up_start": (1130, 350),
