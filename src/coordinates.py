@@ -38,3 +38,18 @@ COORDS = {
     "rage_fallback5v2": (1100, 683),
 
 }
+
+CORDS = {
+    "valk": (560, 1000),
+    "apprentice": (670, 1000),
+    "siege": (810, 1000),
+    "queen": (940, 970),
+    "warden": (1060, 970),
+    "champion": (1170, 970),
+    "king": (1290, 970),
+    "spell": (1420, 1000),
+    "LEFT": (260,510),
+    "RIGHT": (2080,510),
+    "TOPLEFT": (800,60),
+    "TOPRIGHT": (1550,60)
+}
