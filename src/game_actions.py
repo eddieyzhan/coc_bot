@@ -4,6 +4,9 @@ from adb_utils import adb_tap, capture_screen
 from image_utils import wait_for_template, find_template
 from coordinates import COORDS
 
+def jitter_coord(x, y, jitter_range=10):
+    return x + random.randint(-jitter_range, jitter_range), y + random.randint(-jitter_range, jitter_range)
+
 def get_drop_coords(number=1):
     rage_mid = (1202, 104)
     rage_top = (1197, 238)
@@ -28,8 +31,8 @@ def get_drop_coords(number=1):
     elif number == 2:
         print("Using attack strategy 2.")   
         left_x = random.randint(120, 150)
-        right_x = random.randint(400, 455)
-        mid_x = random.randint(260, 300)
+        right_x = random.randint(350, 400)
+        mid_x = random.randint(220, 280)
         left_y = round(0.865 * left_x + 376.2)
         right_y = round(0.865 * right_x + 376.2)
         mid_y = round(0.865 * mid_x + 376.2)
@@ -39,26 +42,26 @@ def get_drop_coords(number=1):
         left_x = random.randint(1755, 1795)
         right_x = random.randint(2270, 2318)
         mid_x = random.randint(1990, 2060)
-        left_y = round(0.751 * left_x - 1278.64)
-        right_y = round(0.751 * right_x - 1278.64)
-        mid_y = round(0.751 * mid_x - 1278.64)
+        left_y = round(0.74 * left_x - 1120)
+        right_y = round(0.74 * right_x - 1120)
+        mid_y = round(0.74 * mid_x - 1120)
         return left_x, left_y, right_x, right_y, mid_x + 5, mid_y, rage_mid, rage_top, rage_bot, rage2_left_up, rage2_left_down
 
 def drop_trophies():
-    iterations = random.randint(25, 45)
+    iterations = random.randint(15, 25)
     print(f"Starting trophy drop for {iterations} iterations.")
     for i in range(iterations):
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(True)
         print("Waiting for 'return home' indicator...")
-        timeout = 240
+        timeout = 180
         start_time = time.time()
         while time.time() - start_time < timeout:
             ret_home = wait_for_template("templates/return_home.png", timeout=3)
             if ret_home:
                 print("Return home detected at:", ret_home)
-                time.sleep(random.uniform(1, 2))
-                for _ in range(random.randint(1, 2)):
+                time.sleep(random.uniform(0, 0.5))
+                for _ in range(random.randint(2, 2)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
@@ -79,14 +82,14 @@ def find_attack(drop=False):
             jitter_x = random.randint(-50, 50)
             jitter_y = random.randint(-50, 50)
             adb_tap(attack_btn[0] + jitter_x, attack_btn[1] + jitter_y)
-            time.sleep(random.uniform(0.5, 3))
+            time.sleep(random.uniform(0, 1))
         else:
             print("Attack button not found within 10 seconds.")
             print("backup")
             jitter_x = random.randint(-60, 60)
             jitter_y = random.randint(-60, 60)
             adb_tap(COORDS["backup_attack"][0] + jitter_x, COORDS["backup_attack"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 3))
+            time.sleep(random.uniform(0, 1))
 
         print("Searching for 'find match' button...")
         match_btn = wait_for_template("templates/find_match.png", timeout=3)
@@ -97,7 +100,7 @@ def find_attack(drop=False):
                 jitter_y = random.randint(-70, 70)
                 adb_tap(match_btn[0] + jitter_x, match_btn[1] + jitter_y)
                 time.sleep(random.uniform(0.2, 0.3))
-            time.sleep(random.uniform(0.5, 2))
+            time.sleep(random.uniform(0, 1))
         else:
             print("Find match button not found within 3 seconds.")
             # Restart the loop if this part fails.
@@ -109,7 +112,7 @@ def find_attack(drop=False):
             break
 
         # Randomly click the 'next' button 0 to 5 times.
-        clicks = random.randint(0, 3)
+        clicks = random.randint(0, 1)
         for _ in range(clicks):
             random_moves = random.randint(0, 1)
             if random_moves == 1:
@@ -118,24 +121,24 @@ def find_attack(drop=False):
                     random_x = random.randint(600, 1200)
                     random_y = random.randint(100, 500)
                     adb_tap(random_x, random_y)
-                    time.sleep(random.uniform(1, 2))
+                    time.sleep(random.uniform(0, 1))
             next_btn = wait_for_template("templates/next_button.png", timeout=20)
             if next_btn:
                 print("Clicking next button at:", next_btn)
-                time.sleep(random.uniform(0, 1))
+                time.sleep(random.uniform(0, 0.5))
                 for _ in range(random.randint(1, 5)):
                     jitter_x = random.randint(-80, 80)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(next_btn[0] + jitter_x, next_btn[1] + jitter_y)
-                    time.sleep(random.uniform(0.2, 0.5))
             else:
                 print("Next button not found within 20 seconds.")
-                time.sleep(240)
+                time.sleep(180)
                 continue
 
-        time.sleep(random.uniform(0, 3))
+        time.sleep(random.uniform(0, 0.5))
 
         attack()
+
         break
 
 def drop_attack():
@@ -144,214 +147,153 @@ def drop_attack():
 
     next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
-    print("Capturing hero positions dynamically...")
-    king_found = wait_for_template("templates/king.png", timeout=3)
+    adb_tap(1500 + random.randint(-7, 7), 970 + random.randint(-7, 7))
 
-    if king_found:
-        print("Found King at:", king_found)
-        adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(0.75, 1.5))
-        placement = random.randint(1, 3)
-        if placement == 1:
-            print("Dropping King at left drop point.")
-            adb_tap(left_x, left_y)
-        elif placement == 2:
-            print("Dropping King at right drop point.")
-            adb_tap(right_x, right_y)
-        elif placement == 3:
-            print("Dropping King at mid drop point.")
-            adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0, 2))
+    time.sleep(random.uniform(0.2, 0.5))
     
-    surrender = wait_for_template("templates/surrender.png", timeout=5)
-    
-    if surrender:
-        print("Found Surrender button at:", surrender)
-        jitter_x = random.randint(-100, 100)
-        jitter_y = random.randint(-20, 20)
-        adb_tap(surrender[0] + jitter_x, surrender[1] + jitter_y)
-        time.sleep(random.uniform(0, 1))
+    adb_tap(random.randint(1000, 1700), random.randint(100, 400))
 
-        okay = wait_for_template("templates/okay.png", timeout=5)
-        if okay:
-            print("Found Okay button at:", okay)
-            time.sleep(random.uniform(0, 1.5))
-            for _ in range(random.randint(1, 2)):
-                jitter_x = random.randint(-50, 50)
-                jitter_y = random.randint(-20, 20)
-                adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
-                time.sleep(random.uniform(0.25, 0.4))
-    else:
-        print("Surrender button not found, pressing backup end battle button")
-        jitter_x = random.randint(-100, 100)
-        jitter_y = random.randint(-20, 20)
-        adb_tap(217 + jitter_x, 803 + jitter_y)
+    time.sleep(random.uniform(0.3, 0.7))
+
+    jitter_x = random.randint(-50, 50)
+    jitter_y = random.randint(-20, 20)
+    adb_tap(140 + jitter_x, 805 + jitter_y)
+
+    okay = wait_for_template("templates/okay.png", timeout=5)
+    if okay:
+        print("Found Okay button at:", okay)
+        time.sleep(random.uniform(0, 0.5))
+        for _ in range(random.randint(1, 2)):
+            jitter_x = random.randint(-50, 50)
+            jitter_y = random.randint(-20, 20)
+            adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
+            time.sleep(random.uniform(0.25, 0.4))
 
 def attack():
     print("Starting attack sequence...")
-    attack_strat = random.randint(1, 3)
+    attack_strat = random.randint(2, 3)
     left_x, left_y, right_x, right_y, mid_x, mid_y, rage_mid, rage_top, rage_bot, rage2_right_up, rage2_right_down = get_drop_coords(attack_strat)
     
     next_btn = wait_for_template("templates/next_button.png", timeout=15)
 
-    # Step 1: Dynamically search for hero templates.
-    print("Capturing hero positions dynamically...")
-    valk_found = wait_for_template("templates/valk.png", timeout=2)
-    king_found = wait_for_template("templates/king.png", timeout=2)
-    queen_found = wait_for_template("templates/queen.png", timeout=2)
-    warden_found = wait_for_template("templates/warden.png", timeout=2)
-    royal_champion_found = wait_for_template("templates/royal_champion.png", timeout=2)
-    prince_found = wait_for_template("templates/minion_prince.png", timeout=2)
-    siege_found = wait_for_template("templates/siege_barracks.png", timeout=2)
-    baby_dragon_found = wait_for_template("templates/baby_dragon.png", timeout=2)
-    rage_found = wait_for_template("templates/rage.png", timeout=2)
+    jitter_x = random.randint(-40, 40)
+    jitter_y = random.randint(-40, 40)
 
-    # Step 2: Tap on the troops if found.
-    if valk_found:
-        print("Found Valkyrie at:", valk_found)
-        adb_tap(valk_found[0], valk_found[1])
-        time.sleep(random.uniform(0.5, 1))
-    else:
-        print("Valkyrie not found.")
-        adb_tap(COORDS["valk_select_fallback"][0], COORDS["valk_select_fallback"][1])
-        time.sleep(random.uniform(0.5, 0.7))
-
+    # === Baby Dragon + Left ===
+    adb_tap(*jitter_coord(592, 975))
+    time.sleep(random.uniform(0.1, 0.3))
     adb_tap(left_x, left_y)
-    time.sleep(random.uniform(0.5, 0.7))
-    adb_tap(right_x, right_y)
-    time.sleep(random.uniform(0.5, 0.7))
+    time.sleep(random.uniform(0.1, 0.3))
 
-    if king_found:
-        print("Found King at:", king_found)
-        adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(0.15, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
+    
+    adb_tap(*jitter_coord(941, 946))
+    time.sleep(random.uniform(0.15, 0.4))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.25))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.25))
 
-    if queen_found:
-        print("Found Queen at:", queen_found)
-        adb_tap(queen_found[0], queen_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.2, 0.4))
+    # === Tap Queen ===
+    adb_tap(*jitter_coord(1084, 951))
+    time.sleep(random.uniform(0.15, 0.3))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.3))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.3))
 
-    if warden_found:
-        print("Found Warden at:", warden_found)
-        adb_tap(warden_found[0], warden_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.2, 0.3))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.2, 0.3))
+    # === Tap Warden ===
+    adb_tap(*jitter_coord(1230, 942))
+    time.sleep(random.uniform(0.15, 0.3))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.3))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.3))
 
-    if royal_champion_found:
-        print("Found Royal Champion at:", royal_champion_found)
-        adb_tap(royal_champion_found[0], royal_champion_found[1])
-        time.sleep(random.uniform(0.1, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
+    # === Tap Royal Champion ===
+    adb_tap(*jitter_coord(1376, 949))
+    time.sleep(random.uniform(0.1, 0.3))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.25))
+    adb_tap(mid_x, mid_y)
+    time.sleep(random.uniform(0.15, 0.25))
 
-    if prince_found:
-        print("Found Prince at:", prince_found)
-        adb_tap(prince_found[0], prince_found[1])
-        time.sleep(random.uniform(0.15, 0.4))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.15, 0.25))
+    # === Tap Valkyrie ===
+    adb_tap(*jitter_coord(457, 977))
+    time.sleep(random.uniform(0.2, 0.3))
 
-    if valk_found:
-        print("Found Valkyrie at:", valk_found)
-        adb_tap(valk_found[0], valk_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-    else:
-        print("Valkyrie not found.")
-        adb_tap(COORDS["valk_select_fallback"][0], COORDS["valk_select_fallback"][1])
-        time.sleep(random.uniform(0.2, 0.4))
-
+    # === Tap Middle Range 5-9 ===
     for _ in range(random.randint(5, 9)):
         adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.2, 0.3))
-
-    if warden_found:
-        print("Found Warden at:", warden_found)
-        time.sleep(random.uniform(0.5, 1))
-        adb_tap(warden_found[0], warden_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
+        time.sleep(random.uniform(0.1, 0.2))
     
-    if king_found:
-        print("Found King at:", king_found)
-        adb_tap(king_found[0], king_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
 
-    if baby_dragon_found:
-        print("Found Baby Dragon at:", baby_dragon_found)
-        adb_tap(baby_dragon_found[0], baby_dragon_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(left_x, left_y)
-        time.sleep(random.uniform(0.2, 0.4))
-    
-    if siege_found:
-        print("Found Siege Barracks at:", siege_found)
-        adb_tap(siege_found[0], siege_found[1])
-        time.sleep(random.uniform(0.2, 0.4))
-        adb_tap(right_x, right_y)
+    # === Siege + Right ===
+    adb_tap(*jitter_coord(786, 992))
+    time.sleep(random.uniform(0.1, 0.3))
+    adb_tap(mid_x, mid_y)
 
-    time.sleep(random.uniform(9, 11))
+    # === Warden Again ===
+    time.sleep(random.uniform(0.5, 0.8))
+    adb_tap(*jitter_coord(1230, 942))
+    time.sleep(random.uniform(0.2, 0.4))
 
-    jitter_x = random.randint(-50, 50)
-    jitter_y = random.randint(-50, 50)
-    if attack_strat == 1:
+    # === King Again ===
+    adb_tap(*jitter_coord(941, 946))
+    time.sleep(random.uniform(0.2, 0.4))
 
-    # Step 3: Tap on the rage spell.
-        if rage_found:
-            print("Found Rage spell at:", rage_found)
-            adb_tap(rage_found[0], rage_found[1])
-            time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1"][0] + jitter_x, COORDS["rage_fallback1"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1] + jitter_y)
-            time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3"][0]+ jitter_x, COORDS["rage_fallback3"][1] + jitter_y)
-            time.sleep(random.uniform(5, 8))
-            adb_tap(rage_found[0], rage_found[1])
-            adb_tap(COORDS["rage_fallback4"][0]+ jitter_x, COORDS["rage_fallback4"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 1))
-            adb_tap(COORDS["rage_fallback5"][0]+ jitter_x, COORDS["rage_fallback5"][1] + jitter_y)
-    elif attack_strat == 2:
-        if rage_found:
-            print("Found Rage spell at:", rage_found)
-            adb_tap(rage_found[0], rage_found[1])
-            time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1v2"][0] + jitter_x, COORDS["rage_fallback1v2"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2v2"][0] + jitter_x, COORDS["rage_fallback2v2"][1] + jitter_y)
-            time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3v2"][0] + jitter_x, COORDS["rage_fallback3v2"][1] + jitter_y)
-            time.sleep(random.uniform(5, 8))
-            adb_tap(rage_found[0], rage_found[1])
-            adb_tap(rage_top[0] + 100 + jitter_x, rage_top[1] + 100 + jitter_y)
-            time.sleep(random.uniform(0.5, 1))
-            adb_tap(rage2_right_down[0] + 150 + jitter_x, rage2_right_down[1] - 50 + jitter_y)
-    
+    if attack_strat == 2:
+        adb_tap(1654 + random.randint(-7, 7), 965 + random.randint(-7, 7))
+
+        # Click 4 specific points with 0.2–0.4 sec delay
+        for x, y in [(988, 704), (791, 448), (1122, 535), (1026, 608), (1036, 360), (1351, 686)]:
+            time.sleep(random.uniform(0.2, 0.4))
+            adb_tap(x + random.randint(-7, 7), y + random.randint(-7, 7))
+
     elif attack_strat == 3:
-        if rage_found:
-            print("Found Rage spell at:", rage_found)
-            adb_tap(rage_found[0], rage_found[1])
+        # Select starting point with 7 jitter
+        adb_tap(1654 + random.randint(-7, 7), 965 + random.randint(-7, 7))
+
+        # Click 4 new coordinates with same timing
+        for x, y in [(1258, 270), (1380, 483), (1408, 685), (1300, 522), (1285, 644)]:
+            time.sleep(random.uniform(0.2, 0.4))
+            adb_tap(x + random.randint(-7, 7), y + random.randint(-7, 7))
+
+    # === Rage Sequence ===
+    if attack_strat == 1:
+        time.sleep(random.uniform(9, 11))
+        jitter_x = random.randint(-10, 10)
+        jitter_y = random.randint(-10, 10)
+        adb_tap(*jitter_coord(1513, 970))
+        time.sleep(random.uniform(0.3, 0.6))
+        adb_tap(COORDS["rage_fallback1"][0] + jitter_x, COORDS["rage_fallback1"][1] + jitter_y)
+        time.sleep(random.uniform(0.5, 0.8))
+        adb_tap(COORDS["rage_fallback2"][0] + jitter_x, COORDS["rage_fallback2"][1] + jitter_y)
+        time.sleep(random.uniform(0.3, 0.6))
+        adb_tap(COORDS["rage_fallback3"][0] + jitter_x, COORDS["rage_fallback3"][1] + jitter_y)
+        time.sleep(random.uniform(5, 8))
+        adb_tap(*jitter_coord(1513, 970))
+        adb_tap(COORDS["rage_fallback4"][0] + jitter_x, COORDS["rage_fallback4"][1] + jitter_y)
+        time.sleep(random.uniform(0.5, 1))
+        adb_tap(COORDS["rage_fallback5"][0] + jitter_x, COORDS["rage_fallback5"][1] + jitter_y)
+
+    elif attack_strat == 2:
+
+        # Wait 18–21 seconds
+        time.sleep(random.uniform(9, 12))
+        adb_tap(*jitter_coord(1513, 970))
+        # Rage drop at 3 locations
+        for x, y in [(1013, 307), (1035, 513), (1055, 689), (1409, 477), (1421, 679)]:
+            adb_tap(x + random.randint(-7, 7) + 15, y + random.randint(-7, 7))
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback1v2"][0] + jitter_x, COORDS["rage_fallback1v2"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 0.8))
-            adb_tap(COORDS["rage_fallback2v2"][0] + jitter_x, COORDS["rage_fallback2v2"][1] + jitter_y)
+
+    elif attack_strat == 3:
+
+
+        # Wait 18–21 seconds
+        time.sleep(random.uniform(9, 12))
+        adb_tap(*jitter_coord(1513, 970))
+
+        # Rage drop at 3 new locations
+        for x, y in [(1258, 270), (1380, 483), (1408, 685), (900, 400), (980, 600)]:
+            adb_tap(x + random.randint(-7, 7) - 40 , y + random.randint(-7, 7))
             time.sleep(random.uniform(0.3, 0.6))
-            adb_tap(COORDS["rage_fallback3v2"][0] + jitter_x, COORDS["rage_fallback3v2"][1] + jitter_y)
-            time.sleep(random.uniform(5, 8))
-            adb_tap(rage_found[0], rage_found[1])
-            adb_tap(COORDS["rage_fallback4v2"][0] + jitter_x, COORDS["rage_fallback4v2"][1] + jitter_y)
-            time.sleep(random.uniform(0.5, 1))
-            adb_tap(COORDS["rage_fallback5v2"][0] + jitter_x, COORDS["rage_fallback5v2"][1] + jitter_y)

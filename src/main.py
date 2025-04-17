@@ -14,9 +14,8 @@ def main():
         print(f"Current Trophies: {trophies}")
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4600 and trophies < 5200:
+            if trophies > 4700 and trophies < 5200:
                 drop_trophies()
-                time.sleep(random.uniform(0, 1))
                 continue
             else:
                 tries = 0
@@ -28,20 +27,19 @@ def main():
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(False)
         print("Waiting for 'return home' indicator...")
-        timeout = 240
+        timeout = 180
         start_time = time.time()
         while time.time() - start_time < timeout:
             ret_home = wait_for_template("templates/return_home.png", timeout=3)
             if ret_home:
                 print("Return home detected at:", ret_home)
-                time.sleep(random.uniform(0.5, 1))
-                for _ in range(random.randint(1, 2)):
+                time.sleep(random.uniform(0.1, 0.5))
+                for _ in range(random.randint(2, 2)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
                     time.sleep(random.uniform(0.2, 0.3))
                 break
-            time.sleep(1)
         else:
             print("Timeout waiting for return home.")
             jitter_x = random.randint(-100, 100)

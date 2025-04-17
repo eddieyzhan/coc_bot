@@ -1,7 +1,7 @@
 import subprocess
 import random
 
-def adb_tap(x, y, jitter=2):
+def adb_tap(x, y, jitter=1):
     """
     Sends a tap command via ADB at (x, y) with an added random jitter.
     """

@@ -13,8 +13,8 @@ def read_trophies():
 
     # Coordinates for the top-left corner where trophies appear.
     # Adjust these (x1, y1, x2, y2) to match your device/screenshot exactly.
-    x1, y1 = 230, 165    # top-left corner of ROI
-    x2, y2 = 325, 205  # bottom-right corner of ROI
+    x1, y1 = 230, 165   # top-left corner of ROI
+    x2, y2 = 325, 205   # bottom-right corner of ROI
 
     # Crop the region of interest (ROI)
     roi = img[y1:y2, x1:x2]
