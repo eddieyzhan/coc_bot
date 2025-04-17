@@ -255,8 +255,8 @@ def get_drop_coords(number=1):
     elif number == 2:
         print("Using attack strategy 2.")   
         left_x = random.randint(120, 150)
-        right_x = random.randint(400, 455)
-        mid_x = random.randint(260, 300)
+        right_x = random.randint(350, 400)
+        mid_x = random.randint(220, 280)
         left_y = round(0.865 * left_x + 376.2)
         right_y = round(0.865 * right_x + 376.2)
         mid_y = round(0.865 * mid_x + 376.2)
@@ -329,23 +329,24 @@ def drop_trophies():
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(True)
         print("Waiting for 'return home' indicator...")
-        timeout = 180
+        timeout = 240
         start_time = time.time()
         while time.time() - start_time < timeout:
             ret_home = wait_for_template("templates/return_home.png", timeout=3)
             if ret_home:
                 print("Return home detected at:", ret_home)
-                time.sleep(random.uniform(0.5, 1))
-                for _ in range(random.randint(2, 3)):
+                time.sleep(random.uniform(1, 2))
+                for _ in range(random.randint(2, 2)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
-                    time.sleep(random.uniform(0.75, 1))
+                    time.sleep(random.uniform(0.2, 0.3))
                 time.sleep(random.uniform(0.5, 1))
                 break
             time.sleep(1)
         else:
             print("Timeout waiting for return home.")
+
 
 
 
@@ -475,6 +476,7 @@ def drop_attack():
                 adb_tap(okay[0] + jitter_x, okay[1] + jitter_y)
                 time.sleep(random.uniform(0.25, 0.4))
     else:
+        print("Surrender button not found, pressing backup end battle button")
         jitter_x = random.randint(-100, 100)
         jitter_y = random.randint(-20, 20)
         adb_tap(217 + jitter_x, 803 + jitter_y)
@@ -776,11 +778,14 @@ def main():
     iterations = random.randint(25, 35)
     print(f"Starting main loop for {iterations} iterations.")
     for i in range(iterations):
+        attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
         print(f"AHHHHHH WE ARE ABOUT TO TEST TROPHIES")
         trophies = read_trophies()
+        print(f"Current Trophies: {trophies}")
+        print(f"AHHHHHH WE GOT TROPHIES")
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4600 and trophies < 5200:
+            if trophies > 4800 and trophies < 5200:
                 drop_trophies()
                 # Optionally, wait some time after dropping trophies before proceeding.
                 time.sleep(random.uniform(0, 1))
@@ -795,23 +800,26 @@ def main():
         print(f"\nIteration {i+1}/{iterations}")
         find_attack(False)
         print("Waiting for 'return home' indicator...")
-        timeout = 180
+        timeout = 240
         start_time = time.time()
         while time.time() - start_time < timeout:
             ret_home = wait_for_template("templates/return_home.png", timeout=3)
             if ret_home:
                 print("Return home detected at:", ret_home)
                 time.sleep(random.uniform(0.5, 1))
-                for _ in range(random.randint(2, 3)):
+                for _ in range(random.randint(2, 2)):
                     jitter_x = random.randint(-50, 50)
                     jitter_y = random.randint(-50, 50)
                     adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
-                    time.sleep(random.uniform(0.75, 1))
-                time.sleep(random.uniform(0.5, 1))
+                    time.sleep(random.uniform(0.2, 0.3))
                 break
             time.sleep(1)
         else:
             print("Timeout waiting for return home.")
+            jitter_x = random.randint(-100, 100)
+            jitter_y = random.randint(-20, 20)
+            adb_tap(217 + jitter_x, 803 + jitter_y)
+
     print("Main loop finished.")
 
 if __name__ == "__main__":
