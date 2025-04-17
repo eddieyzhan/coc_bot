@@ -6,7 +6,7 @@ import re
 import time
 from adb_utils import capture_screen
 
-def read_trophies():
+"""def read_trophies():
     capture_screen("trophy_screen.png")
     img = cv2.imread("trophy_screen.png")
     if img is None:
@@ -43,7 +43,45 @@ def read_trophies():
         trophies = int(trophies_str)
         return trophies
     else:
+        return None"""
+
+def read_trophies():
+    capture_screen("trophy_screen.png")
+    img = cv2.imread("trophy_screen.png")
+    if img is None:
+        print("Error reading captured screen!")
         return None
+
+    # Coordinates for the top-left corner where trophies appear.
+    # Adjust these (x1, y1, x2, y2) to match your device/screenshot exactly.
+    x1, y1 = 215, 170   # top-left corner of ROI
+    x2, y2 = 300, 200  # bottom-right corner of ROI
+
+    # Crop the region of interest (ROI)
+    roi = img[y1:y2, x1:x2]
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+
+    # Optionally apply a threshold to darken text
+    # You may need to experiment with thresholds or other preprocessing
+    _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_OTSU)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    eroded_image = cv2.erode(thresh, kernel, iterations=1)
+    # Use Tesseract to read the text
+    # --psm 7 helps Tesseract focus on a single line/number
+    config = "--psm 7 -c tessedit_char_whitelist=0123456789"
+    text = pytesseract.image_to_string(eroded_image, config=config)
+
+    # Extract digits from the recognized text
+    match = re.findall(r"\d+", text)
+    if match:
+        trophies_str = match[0]  # e.g. "2922"
+        trophies = int(trophies_str)
+        return trophies
+    else:
+        return None
+    
 
 def read_ressources():
     capture_screen("resources_screen.png")
