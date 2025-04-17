@@ -44,7 +44,75 @@ def read_trophies():
         return trophies
     else:
         return None
-    
+
+def read_ressources():
+    capture_screen("resources_screen.png")
+
+    img = cv2.imread("resources_screen.png")
+    if img is None:
+        print("Error reading captured screen!")
+        return None
+    x1G, y1G = 170, 150   # top-left corner of ROI FOR GOLD    
+    x2G, y2G = 345, 185  # bottom-right corner of ROI FOR GOLD
+    x1E, y1E = 170, 205   # top-left corner of ROI FOR ELIXIR
+    x2E, y2E = 345, 240  # bottom-right corner of ROI FOR ELIXIR
+    roi_gold = img[y1G:y2G, x1G:x2G]
+    roi_elixir = img[y1E:y2E, x1E:x2E]
+    gray_gold = cv2.cvtColor(roi_gold, cv2.COLOR_BGR2GRAY)
+    gray_elixir = cv2.cvtColor(roi_elixir, cv2.COLOR_BGR2GRAY)
+
+    _, thresh_gold = cv2.threshold(gray_gold, 220, 255, cv2.THRESH_OTSU)
+    _, thresh_elixir = cv2.threshold(gray_elixir, 220, 255, cv2.THRESH_OTSU)
+
+    # Erode the image to remove noise
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
+    eroded_image_gold = cv2.erode(thresh_gold, kernel, iterations=1)
+    eroded_image_elixir = cv2.erode(thresh_elixir, kernel, iterations=1)
+
+    # Use Tesseract to read the text
+    config = "--psm 7 -c tessedit_char_whitelist=0123456789"
+    text_gold = pytesseract.image_to_string(eroded_image_gold, config=config)
+    text_elixir = pytesseract.image_to_string(eroded_image_elixir, config=config)
+    match_gold = re.findall(r"\d+", text_gold)
+    match_elixir = re.findall(r"\d+", text_elixir)
+    gold = 0
+    elixir = 0
+    if match_gold:
+        gold_str = match_gold[0]
+        gold = int(gold_str)
+    if match_elixir:
+        elixir_str = match_elixir[0]
+        elixir = int(elixir_str)
+    print(f"Gold: {gold}, Elixir: {elixir}")    
+    ressources = gold + elixir
+    return ressources
+
+def read_percentage():
+    # Capture the screen and read the percentage from the current attack 
+    # mainly to stop the attack before 100% to stay as much as possible in fake legends
+    capture_screen("percentage_screen.png")
+    img = cv2.imread("percentage_screen.png")
+    if img is None:
+        print("Error reading captured screen!")
+        return None
+    # unique. just check on your device if you want to change it
+    x1, y1 = 2140, 828  # top-left corner of ROI
+    x2, y2 = 2240, 872  # bottom-right corner of ROI
+    roi = img[y1:y2, x1:x2]
+    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_OTSU)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
+    eroded_image = cv2.erode(thresh, kernel, iterations=1)
+    config = "--psm 7 -c tessedit_char_whitelist=0123456789%"
+    text = pytesseract.image_to_string(eroded_image, config=config)
+    match = re.findall(r"\d+", text)
+    if match:
+        percentage_str = match[0]
+        percentage = int(percentage_str)
+        return percentage
+    else:
+        return None
+
 def find_template(template_path, threshold=0.85):
     """
     Capture the screen and search for the template image.
