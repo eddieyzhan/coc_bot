@@ -1,11 +1,11 @@
 import random
 import time
 from image_utils import read_trophies
-from game_actions import drop_trophies, find_attack
+from game_actions import drop_trophies, find_attack, drop_attack, return_home
 from adb_utils import adb_tap
 from image_utils import wait_for_template
 
-def main():
+"""def main():
     iterations = random.randint(25, 35)
     print(f"Starting main loop for {iterations} iterations.")
     for i in range(iterations):
@@ -46,7 +46,43 @@ def main():
             jitter_y = random.randint(-20, 20)
             adb_tap(217 + jitter_x, 803 + jitter_y)
 
-    print("Main loop finished.")
+    print("Main loop finished.")"""
 
+def main():
+    # check trophies
+    trophies = read_trophies()
+    if trophies is None:
+        print("Error reading trophies!")
+        return
+    print(f"Current Trophies: {trophies}")
+
+    if trophies > 4970 and trophies < 5000:
+        print("Starting drop strategy...")
+        # Drop strategy: Attack until trophies are below 4920
+        while trophies > 4915:
+            find_attack(True)
+            time.sleep(0.5)
+            return_home()
+            time.sleep(0.5)
+            #WAIT FOR THE ATT BUTTON TO APPEAR
+            wait_for_template("templates/attack_button.png", timeout=10)
+            time.sleep(0.5)
+            #check trophies again
+            trophies = read_trophies()
+            print(f"Current Trophies: {trophies}")
+            if trophies < 4920:
+                print("Trophies are low, stopping drop strategy.")
+                break
+    
+    elif trophies > 4900 and trophies < 4970:
+            print("Starting attack loop...")
+            find_attack(False)
+            time.sleep(0.5)
+            return_home()
+            time.sleep(0.5)
+    else:
+        print("misread detected")
+        return    
+    
 if __name__ == "__main__":
     main()
