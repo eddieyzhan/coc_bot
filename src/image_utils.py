@@ -1,3 +1,5 @@
+import json
+import os
 import cv2
 import pytesseract
 import re
@@ -10,11 +12,14 @@ def read_trophies():
     if img is None:
         print("Error reading captured screen!")
         return None
+    
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config.json")
 
-    # Coordinates for the top-left corner where trophies appear.
-    # Adjust these (x1, y1, x2, y2) to match your device/screenshot exactly.
-    x1, y1 = 230, 165   # top-left corner of ROI
-    x2, y2 = 325, 205   # bottom-right corner of ROI
+    with open(CONFIG_PATH, "r") as f:
+        config = json.load(f)
+
+    roi = config["trophy_roi"]
+    x1, y1, x2, y2 = roi["x1"], roi["y1"], roi["x2"], roi["y2"]
 
     # Crop the region of interest (ROI)
     roi = img[y1:y2, x1:x2]
