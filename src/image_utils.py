@@ -85,7 +85,6 @@ def read_trophies():
 
 def read_ressources():
     capture_screen("resources_screen.png")
-
     img = cv2.imread("resources_screen.png")
     if img is None:
         print("Error reading captured screen!")
@@ -93,24 +92,27 @@ def read_ressources():
     x1G, y1G = 170, 150   # top-left corner of ROI FOR GOLD    
     x2G, y2G = 345, 185  # bottom-right corner of ROI FOR GOLD
     x1E, y1E = 170, 205   # top-left corner of ROI FOR ELIXIR
-    x2E, y2E = 345, 240  # bottom-right corner of ROI FOR ELIXIR
+    x2E, y2E = 345, 240  # bottom-right corner of ROI FOR EL
     roi_gold = img[y1G:y2G, x1G:x2G]
     roi_elixir = img[y1E:y2E, x1E:x2E]
-    gray_gold = cv2.cvtColor(roi_gold, cv2.COLOR_BGR2GRAY)
-    gray_elixir = cv2.cvtColor(roi_elixir, cv2.COLOR_BGR2GRAY)
 
-    _, thresh_gold = cv2.threshold(gray_gold, 220, 255, cv2.THRESH_OTSU)
-    _, thresh_elixir = cv2.threshold(gray_elixir, 220, 255, cv2.THRESH_OTSU)
+    # convert the ROI to HSV color space
+    roi_gold_hsv = cv2.cvtColor(roi_gold, cv2.COLOR_BGR2HSV)
+    roi_elixir_hsv = cv2.cvtColor(roi_elixir, cv2.COLOR_BGR2HSV)
+    # define the lower and upper bounds for the color in bgr
+    lower_bound_gold = np.array([10, 40, 201])  # BGR for gold color
+    upper_bound_gold = np.array([40, 75, 255])  # BGR for gold color
+    lower_bound_elixir = np.array([150, 0, 170])  # BGR for elixir color  
+    upper_bound_elixir = np.array([179, 40, 255])  # BGR for elixir color
+    
+    # create a mask for the gold color
+    mask_gold = cv2.inRange(roi_gold_hsv, lower_bound_gold, upper_bound_gold)
+    # create a mask for the elixir color
+    mask_elixir = cv2.inRange(roi_elixir_hsv, lower_bound_elixir, upper_bound_elixir)
 
-    # Erode the image to remove noise
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
-    eroded_image_gold = cv2.erode(thresh_gold, kernel, iterations=1)
-    eroded_image_elixir = cv2.erode(thresh_elixir, kernel, iterations=1)
-
-    # Use Tesseract to read the text
     config = "--psm 7 -c tessedit_char_whitelist=0123456789"
-    text_gold = pytesseract.image_to_string(eroded_image_gold, config=config)
-    text_elixir = pytesseract.image_to_string(eroded_image_elixir, config=config)
+    text_gold = pytesseract.image_to_string(mask_gold, config=config)
+    text_elixir = pytesseract.image_to_string(mask_elixir, config=config)
     match_gold = re.findall(r"\d+", text_gold)
     match_elixir = re.findall(r"\d+", text_elixir)
     gold = 0
@@ -124,6 +126,8 @@ def read_ressources():
     print(f"Gold: {gold}, Elixir: {elixir}")    
     ressources = gold + elixir
     return ressources
+
+
 
 def read_percentage():
     # Capture the screen and read the percentage from the current attack 
