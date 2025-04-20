@@ -4,6 +4,7 @@ import cv2
 import pytesseract
 import re
 import time
+import numpy as np
 from adb_utils import capture_screen
 
 """def read_trophies():
