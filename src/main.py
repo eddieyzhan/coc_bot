@@ -1,7 +1,7 @@
 import random
 import time
 from image_utils import read_trophies
-from game_actions import drop_trophies, find_attack, drop_attack, return_home
+from game_actions import drop_trophies, find_attack, drop_attack
 from adb_utils import adb_tap
 from image_utils import wait_for_template
 from modes import get_user_input_with_timeout, force_drop_mode, force_loot_mode, normal_mode, legends_mode
