@@ -211,3 +211,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Disclaimer
 
 This bot is for educational purposes only. Using bots or automation tools may violate Clash of Clans' Terms of Service. Use at your own risk.
+=======
