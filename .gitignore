@@ -1,3 +1,5 @@
 screen.png
 trophy_screen.png
 config.json
+__pycache__/
+*.pyc

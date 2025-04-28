@@ -4,85 +4,40 @@ from image_utils import read_trophies
 from game_actions import drop_trophies, find_attack, drop_attack, return_home
 from adb_utils import adb_tap
 from image_utils import wait_for_template
-
-"""def main():
-    iterations = random.randint(25, 35)
-    print(f"Starting main loop for {iterations} iterations.")
-    for i in range(iterations):
-        attack_btn = wait_for_template("templates/attack_button.png", timeout=10)
-        trophies = read_trophies()
-        print(f"Current Trophies: {trophies}")
-        if trophies is not None:
-            print(f"Current Trophies: {trophies}")
-            if trophies > 4700 and trophies < 5200:
-                drop_trophies()
-                continue
-            else:
-                tries = 0
-                while trophies > 5200 and trophies < 2000 and tries < 3:
-                    print(f"Misread detected (trophies = {trophies}). Retrying read ({tries + 1}/3)...")
-                    trophies = read_trophies()
-                    tries += 1
-
-        print(f"\nIteration {i+1}/{iterations}")
-        find_attack(False)
-        print("Waiting for 'return home' indicator...")
-        timeout = 180
-        start_time = time.time()
-        while time.time() - start_time < timeout:
-            ret_home = wait_for_template("templates/return_home.png", timeout=3)
-            if ret_home:
-                print("Return home detected at:", ret_home)
-                time.sleep(random.uniform(0.1, 0.5))
-                for _ in range(random.randint(2, 2)):
-                    jitter_x = random.randint(-50, 50)
-                    jitter_y = random.randint(-50, 50)
-                    adb_tap(ret_home[0] + jitter_x, ret_home[1] + jitter_y)
-                    time.sleep(random.uniform(0.2, 0.3))
-                break
-        else:
-            print("Timeout waiting for return home.")
-            jitter_x = random.randint(-100, 100)
-            jitter_y = random.randint(-20, 20)
-            adb_tap(217 + jitter_x, 803 + jitter_y)
-
-    print("Main loop finished.")"""
+from modes import get_user_input_with_timeout, force_drop_mode, force_loot_mode, normal_mode, legends_mode
 
 def main():
-    # check trophies
-    trophies = read_trophies()
-    if trophies is None:
-        print("Error reading trophies!")
-        return
-    print(f"Current Trophies: {trophies}")
-
-    if trophies > 4970 and trophies < 5000:
-        print("Starting drop strategy...")
-        # Drop strategy: Attack until trophies are below 4920
-        while trophies > 4915:
-            find_attack(True)
-            time.sleep(0.5)
-            return_home()
-            time.sleep(0.5)
-            #WAIT FOR THE ATT BUTTON TO APPEAR
-            wait_for_template("templates/attack_button.png", timeout=10)
-            time.sleep(0.5)
-            #check trophies again
-            trophies = read_trophies()
-            print(f"Current Trophies: {trophies}")
-            if trophies < 4920:
-                print("Trophies are low, stopping drop strategy.")
-                break
+    """Main function that prompts for mode selection and runs the appropriate mode."""
+    print("=== Clash of Clans Auto-Farming Tool ===")
+    print("Please select a mode:")
+    print("1. Force_drop - Force trophy dropping")
+    print("2. Force_loot - Force looting without trophy checks")
+    print("3. Normal - Normal mode with trophy checks")
+    print("4. Legends - Legends mode (currently same as normal)")
     
-    elif trophies > 4900 and trophies < 4970:
-            print("Starting attack loop...")
-            find_attack(False)
-            time.sleep(0.5)
-            return_home()
-            time.sleep(0.5)
+    mode_input = get_user_input_with_timeout("Enter mode (1-4 or mode name):", 20)
+    
+    # Process the input to determine the mode
+    if mode_input:
+        mode_input = mode_input.lower()
+        if mode_input in ["1", "force_drop"]:
+            print("Selected mode: Force Drop")
+            force_drop_mode()
+        elif mode_input in ["2", "force_loot"]:
+            print("Selected mode: Force Loot")
+            force_loot_mode()
+        elif mode_input in ["3", "normal"]:
+            print("Selected mode: Normal")
+            normal_mode()
+        elif mode_input in ["4", "legends"]:
+            print("Selected mode: Legends")
+            legends_mode()
+        else:
+            print("Invalid selection. Defaulting to Normal mode.")
+            normal_mode()
     else:
-        print("misread detected")
-        return    
-    
+        print("No selection made. Defaulting to Normal mode.")
+        normal_mode()
+
 if __name__ == "__main__":
     main()
