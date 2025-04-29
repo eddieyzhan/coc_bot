@@ -179,13 +179,28 @@ def attack():
     jitter_x = random.randint(-40, 40)
     jitter_y = random.randint(-40, 40)
 
-    # === Baby Dragon + Left ===
+    # === Siege + Right ===
+    adb_tap(*jitter_coord(786, 992))
+    time.sleep(random.uniform(0.1, 0.3))
+    adb_tap(mid_x, mid_y)
+
+    # === Electro titan + Left ===
     adb_tap(*jitter_coord(592, 975))
     time.sleep(random.uniform(0.1, 0.3))
-    adb_tap(left_x, left_y)
+    for _ in range(random.randint(4, 4)):
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.1, 0.2))    
     time.sleep(random.uniform(0.1, 0.3))
 
-    
+    # === Tap Yeti ===
+    adb_tap(*jitter_coord(457, 977))
+    time.sleep(random.uniform(0.2, 0.3))
+
+    # === Spawn Yeti ===
+    for _ in range(random.randint(10, 10)):
+        adb_tap(mid_x, mid_y)
+        time.sleep(random.uniform(0.1, 0.2))
+
     adb_tap(*jitter_coord(941, 946))
     time.sleep(random.uniform(0.15, 0.4))
     adb_tap(mid_x, mid_y)
@@ -216,21 +231,6 @@ def attack():
     time.sleep(random.uniform(0.15, 0.25))
     adb_tap(mid_x, mid_y)
     time.sleep(random.uniform(0.15, 0.25))
-
-    # === Tap Valkyrie ===
-    adb_tap(*jitter_coord(457, 977))
-    time.sleep(random.uniform(0.2, 0.3))
-
-    # === Tap Middle Range 5-9 ===
-    for _ in range(random.randint(5, 9)):
-        adb_tap(mid_x, mid_y)
-        time.sleep(random.uniform(0.1, 0.2))
-    
-
-    # === Siege + Right ===
-    adb_tap(*jitter_coord(786, 992))
-    time.sleep(random.uniform(0.1, 0.3))
-    adb_tap(mid_x, mid_y)
 
     # === Warden Again ===
     time.sleep(random.uniform(0.5, 0.8))
@@ -278,8 +278,8 @@ def attack():
 
     elif attack_strat == 2:
 
-        # Wait 18–21 seconds
-        time.sleep(random.uniform(9, 12))
+        # Wait 15-25 seconds
+        time.sleep(random.uniform(15, 25))
         adb_tap(*jitter_coord(1513, 970))
         # Rage drop at 3 locations
         for x, y in [(1013, 307), (1035, 513), (1055, 689), (1409, 477), (1421, 679)]:
@@ -289,8 +289,8 @@ def attack():
     elif attack_strat == 3:
 
 
-        # Wait 18–21 seconds
-        time.sleep(random.uniform(9, 12))
+        # Wait 15-25 seconds
+        time.sleep(random.uniform(15, 25))
         adb_tap(*jitter_coord(1513, 970))
 
         # Rage drop at 3 new locations
