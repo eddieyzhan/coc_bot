@@ -89,7 +89,7 @@ def normal_mode():
         trophies = read_trophies()
         if trophies is not None:
             print(f"Current Trophies: {trophies}")
-            if trophies > 4700 and trophies < 5200:
+            if trophies > 4850 and trophies < 5200:
                 drop_trophies()
                 continue
             else:
